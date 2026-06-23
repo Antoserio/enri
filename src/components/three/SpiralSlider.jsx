@@ -1,41 +1,57 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback, useState } from "react";
 import * as THREE from "three";
 
-const CARDS_PER_SEC = 18; // seconds for a full rotation
+const DEG_PER_SEC = 18; // full rotation every 20 s
 
 export default function SpiralSlider({ projects, onProjectClick, onActiveProject }) {
   const canvasRef  = useRef(null);
   const trackRef   = useRef(null);
+  const cardElsRef = useRef([]);          // direct DOM refs for per-frame style updates
   const rotRef     = useRef(0);
   const rafIdRef   = useRef(null);
-  const lastRef    = useRef(null);
+  const lastTsRef  = useRef(null);
   const dragRef    = useRef({ active: false, startX: 0, startRot: 0 });
+
+  // Viewport-reactive sizing
+  const [vw, setVw] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 375));
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const isMobile = vw < 768;
+  // All dimensions proportional to viewport — same ratio on any screen
+  const radius   = Math.min(vw * 0.42, 300);        // px translateZ
+  const persp    = radius * 2.8;                      // perspective ≈ 2.8× radius
+  const cardW    = Math.min(vw * 0.26, 190);
+  const cardH    = cardW * 1.4;
+  const yStep    = isMobile ? 20 : 36;               // spiral vertical spread
 
   const N = projects.length;
 
-  // ── Three.js sphere ───────────────────────────────────────────────────────
+  // ── Three.js sphere (transparent canvas behind CSS cards) ─────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
     camera.position.z = 4;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    const resize = () => {
+    const syncSize = () => {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };
-    resize();
+    syncSize();
 
-    // Icosahedron
     const geo = new THREE.IcosahedronGeometry(1.4, 1);
     const mat = new THREE.MeshPhysicalMaterial({
       color: 0x4D4DFF, metalness: 0.1, roughness: 0.05,
@@ -51,13 +67,12 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     const wire = new THREE.Mesh(wireGeo, wireMat);
     scene.add(wire);
 
-    // Particles
-    const pCount = 200;
+    const pCount = 180;
     const pPos = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount; i++) {
-      pPos[i * 3]     = (Math.random() - 0.5) * 12;
-      pPos[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      pPos[i * 3 + 2] = (Math.random() - 0.5) * 8;
+      pPos[i*3]   = (Math.random() - 0.5) * 12;
+      pPos[i*3+1] = (Math.random() - 0.5) * 12;
+      pPos[i*3+2] = (Math.random() - 0.5) * 8;
     }
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
@@ -65,32 +80,26 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     const particles = new THREE.Points(pGeo, pMat);
     scene.add(particles);
 
-    // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     const ptA = new THREE.PointLight(0x4D4DFF, 2.5, 12);
-    ptA.position.set(-3, 2, 3);
-    scene.add(ptA);
+    ptA.position.set(-3, 2, 3); scene.add(ptA);
     const ptB = new THREE.PointLight(0xFF3D00, 0.8, 10);
-    ptB.position.set(3, -2, 2);
-    scene.add(ptB);
+    ptB.position.set(3, -2, 2); scene.add(ptB);
 
     let animId;
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const t = Date.now() * 0.001;
-      mesh.rotation.x += 0.002;
-      mesh.rotation.y += 0.003;
-      wire.rotation.x = mesh.rotation.x;
-      wire.rotation.y = mesh.rotation.y;
+      mesh.rotation.x += 0.002; mesh.rotation.y += 0.003;
+      wire.rotation.x = mesh.rotation.x; wire.rotation.y = mesh.rotation.y;
       const s = 1 + Math.sin(t * 0.5) * 0.03;
-      mesh.scale.setScalar(s);
-      wire.scale.setScalar(s);
+      mesh.scale.setScalar(s); wire.scale.setScalar(s);
       particles.rotation.y = t * 0.04;
       renderer.render(scene, camera);
     };
     animate();
 
-    const ro = new ResizeObserver(resize);
+    const ro = new ResizeObserver(syncSize);
     ro.observe(canvas);
 
     return () => {
@@ -103,57 +112,66 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     };
   }, []);
 
-  // ── CSS carousel loop ─────────────────────────────────────────────────────
+  // ── CSS carousel RAF loop ──────────────────────────────────────────────────
   useEffect(() => {
     const step = 360 / N;
 
     const tick = (ts) => {
+      // Auto-rotate when not dragging
       if (!dragRef.current.active) {
-        const dt = lastRef.current == null ? 0 : (ts - lastRef.current) / 1000;
-        lastRef.current = ts;
-        rotRef.current += (360 / CARDS_PER_SEC) * dt;
+        const dt = lastTsRef.current == null ? 0 : (ts - lastTsRef.current) / 1000;
+        lastTsRef.current = ts;
+        rotRef.current += DEG_PER_SEC * dt;
       }
 
+      // Rotate the track
       if (trackRef.current) {
         trackRef.current.style.transform = `rotateY(${-rotRef.current}deg)`;
       }
 
-      // Notify active project (front = closest to camera at angle ≈ rotRef)
-      if (onActiveProject) {
-        const norm = ((rotRef.current % 360) + 360) % 360;
-        const idx = Math.round(norm / step) % N;
-        onActiveProject(projects[idx]);
+      // Per-card opacity + brightness based on angle from camera (cos falloff)
+      const cards = cardElsRef.current;
+      let frontIdx = 0;
+      let maxCos = -Infinity;
+
+      for (let i = 0; i < N; i++) {
+        if (!cards[i]) continue;
+        const baseAngle = (i / N) * 360;
+        // World-space angle of this card (0 = facing camera)
+        const worldAngle = ((baseAngle - rotRef.current) % 360 + 360) % 360;
+        const cosA = Math.cos((worldAngle * Math.PI) / 180);
+        // t ∈ [0,1] where 1 = front, 0 = edge
+        const t = Math.max(0, cosA);
+        cards[i].style.opacity = 0.25 + 0.75 * t;
+        cards[i].style.filter  = `brightness(${0.3 + 0.7 * t})`;
+        if (cosA > maxCos) { maxCos = cosA; frontIdx = i; }
       }
+
+      if (onActiveProject) onActiveProject(projects[frontIdx]);
 
       rafIdRef.current = requestAnimationFrame(tick);
     };
+
     rafIdRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafIdRef.current);
   }, [N, projects, onActiveProject]);
 
-  // ── Drag to rotate ────────────────────────────────────────────────────────
+  // ── Drag ──────────────────────────────────────────────────────────────────
   const startDrag = useCallback((clientX) => {
     dragRef.current = { active: true, startX: clientX, startRot: rotRef.current };
-    lastRef.current = null;
+    lastTsRef.current = null;
   }, []);
 
   const moveDrag = useCallback((clientX) => {
     if (!dragRef.current.active) return;
     const dx = clientX - dragRef.current.startX;
-    rotRef.current = dragRef.current.startRot - dx * 0.35;
+    rotRef.current = dragRef.current.startRot - dx * 0.4;
   }, []);
 
   const endDrag = useCallback(() => {
     dragRef.current.active = false;
-    lastRef.current = null;
+    lastTsRef.current = null;
   }, []);
-
-  // ── Responsive values ─────────────────────────────────────────────────────
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const radius   = isMobile ? 160 : 300; // px — translateZ
-  const cardW    = isMobile ? 120 : 190; // px
-  const cardH    = isMobile ? 165 : 265; // px
-  const yStep    = isMobile ? 22  : 38;  // px — spiral vertical spread
 
   return (
     <div
@@ -167,7 +185,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       onTouchMove={e => moveDrag(e.touches[0].clientX)}
       onTouchEnd={endDrag}
     >
-      {/* Three.js sphere — behind everything */}
+      {/* Three.js sphere */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
@@ -178,19 +196,20 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       {/* CSS 3D carousel */}
       <div
         className="absolute inset-0 flex items-center justify-center"
-        style={{ perspective: "900px", zIndex: 2 }}
+        style={{ perspective: `${persp}px`, zIndex: 2 }}
       >
         <div
           ref={trackRef}
           style={{ transformStyle: "preserve-3d", width: 0, height: 0, position: "relative" }}
         >
           {projects.map((project, i) => {
-            const angle  = (i / N) * 360;
-            const yOff   = (i - (N - 1) / 2) * yStep;
+            const angle = (i / N) * 360;
+            const yOff  = (i - (N - 1) / 2) * yStep;
 
             return (
               <div
                 key={project.id}
+                ref={el => { cardElsRef.current[i] = el; }}
                 onClick={() => onProjectClick?.(project)}
                 style={{
                   position: "absolute",
@@ -204,6 +223,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
                   overflow: "hidden",
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
+                  willChange: "transform, opacity, filter",
+                  transition: "none",
                 }}
               >
                 <img
@@ -212,12 +233,11 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
                   draggable={false}
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
-                {/* Glow border */}
                 <div style={{
                   position: "absolute", inset: 0,
                   border: "1px solid rgba(77,77,255,0.45)",
                   borderRadius: 8,
-                  boxShadow: "0 0 24px rgba(77,77,255,0.25), inset 0 0 10px rgba(77,77,255,0.08)",
+                  boxShadow: "0 0 24px rgba(77,77,255,0.2), inset 0 0 12px rgba(77,77,255,0.06)",
                   pointerEvents: "none",
                 }} />
               </div>
