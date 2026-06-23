@@ -1,6 +1,49 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
-import { buildScrollRemap, remapProgress } from "@/lib/scrollRemap";
+
+function getScreenPositions(count) {
+  return Array.from({ length: count }, (_, i) => 0.12 + (i / count) * 0.72);
+}
+
+function buildScrollRemap(projectCount, dwellFraction = 0.08) {
+  const screenTs = getScreenPositions(projectCount);
+  const totalDwell = screenTs.length * dwellFraction;
+  const totalTravel = 1 - totalDwell - 0.04;
+  const camPoints = [0, ...screenTs, 0.99];
+  const distances = [];
+  for (let i = 0; i < camPoints.length - 1; i++) {
+    distances.push(camPoints[i + 1] - camPoints[i]);
+  }
+  const sumDistances = distances.reduce((a, b) => a + b, 0);
+  const stops = [[0, 0]];
+  let p = 0.02;
+  for (let i = 1; i < camPoints.length; i++) {
+    p += (distances[i - 1] / sumDistances) * totalTravel;
+    stops.push([p, camPoints[i]]);
+    if (i < camPoints.length - 1) {
+      p += dwellFraction;
+      stops.push([p, camPoints[i]]);
+    }
+  }
+  const scale = 1 / stops[stops.length - 1][0];
+  stops.forEach((s) => { s[0] *= scale; });
+  return { stops, screenTs };
+}
+
+function remapProgress(progress, stops) {
+  if (progress <= stops[0][0]) return stops[0][1];
+  if (progress >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [p0, t0] = stops[i];
+    const [p1, t1] = stops[i + 1];
+    if (progress >= p0 && progress <= p1) {
+      const localT = (progress - p0) / (p1 - p0);
+      const smooth = localT * localT * (3 - 2 * localT);
+      return t0 + (t1 - t0) * smooth;
+    }
+  }
+  return stops[stops.length - 1][1];
+}
 
 export default function ScrollSpineScene({ projects, onScreenClick }) {
   const canvasRef = useRef(null);
