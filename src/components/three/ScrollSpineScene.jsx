@@ -355,7 +355,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       }
 
       // Hero object
-      const heroFade = Math.max(0, 1 - progress / 0.1);
+      const heroFadeOut = isMobile ? 0.25 : 0.1;
+      const heroFade = Math.max(0, 1 - progress / heroFadeOut);
       heroGroup.visible = heroFade > 0.01;
       if (heroGroup.visible) {
         if (!reducedMotion) {
