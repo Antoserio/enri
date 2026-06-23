@@ -69,10 +69,10 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     renderer.setClearColor(0x0A0A0B, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // --- Espiral 3D pura ---
-    const spiralRadius = isMobile ? 4 : 5;
-    const spiralHeight = 70;
-    const spiralTurns = 3;
+    // --- Espiral 3D clara y limpia ---
+    const spiralRadius = isMobile ? 2 : 2.5;
+    const spiralHeight = 25;
+    const spiralTurns = 2.5;
     
     // Crear puntos de la espiral
     const spiralPoints = [];
@@ -81,19 +81,19 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const angle = t * spiralTurns * Math.PI * 2;
       const x = Math.cos(angle) * spiralRadius;
       const y = Math.sin(angle) * spiralRadius;
-      const z = -8 - (t * spiralHeight);
+      const z = -5 - (t * spiralHeight);
       spiralPoints.push(new THREE.Vector3(x, y, z));
     }
     const curve = new THREE.CatmullRomCurve3(spiralPoints, false, "catmullrom", 0.5);
 
     // Tubo de la espiral
-    const tubeGeo = new THREE.TubeGeometry(curve, 100, 0.1, 8, false);
-    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.4 });
+    const tubeGeo = new THREE.TubeGeometry(curve, 80, 0.08, 8, false);
+    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.5 });
     scene.add(new THREE.Mesh(tubeGeo, tubeMat));
 
     // Brillo de la espiral
-    const glowGeo = new THREE.TubeGeometry(curve, 100, 0.25, 8, false);
-    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending });
+    const glowGeo = new THREE.TubeGeometry(curve, 80, 0.15, 8, false);
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
     scene.add(new THREE.Mesh(glowGeo, glowMat));
 
     // Vértebras
@@ -146,10 +146,10 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
        const tangent = curve.getTangentAt(t).normalize();
        
        // Offset perpendicular a la espiral
-       const up = new THREE.Vector3(0, 1, 0);
-       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
-       const screenOffset = isMobile ? 1.5 : 2.5;
-       const screenPos = point.clone().add(right.multiplyScalar(screenOffset));
+        const up = new THREE.Vector3(0, 1, 0);
+        const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const screenOffset = isMobile ? 1.2 : 1.8;
+        const screenPos = point.clone().add(right.multiplyScalar(screenOffset));
        
        // Quaternion default mira hacia la espiral
        const tempGroup = new THREE.Group();
@@ -162,14 +162,14 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       group.quaternion.copy(defaultQuat);
       scene.add(group);
 
-      // Screen plane - mucho más grande en móvil para ser protagonista
-      const screenW = isMobile ? 2.2 : (isPortrait ? 0.12 : 3.0);
-      const screenH = isMobile ? 3.2 : (isPortrait ? 0.18 : 1.7);
+      // Screen plane — equilibrado entre móvil y desktop
+      const screenW = isMobile ? 1.8 : (isPortrait ? 0.1 : 2.0);
+      const screenH = isMobile ? 2.4 : (isPortrait ? 0.15 : 1.2);
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
       const screenMat = new THREE.MeshBasicMaterial({
-        map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.4,
+        map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.5,
       });
       const screen = new THREE.Mesh(screenGeo, screenMat);
       screen.userData = { project, index: i };
@@ -299,15 +299,15 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       // Camera follows curve with remapped progress (dwells at each screen)
       const camT = progress < 0.02 ? 0 : remapProgress(progress, stops);
 
-      // Cámara orbita el centro de la espiral en AMBOS dispositivos
-      const cameraOrbitRadius = isMobile ? 4 : 6;
+      // Cámara orbita el centro de la espiral — clara y distancia óptima
+      const cameraOrbitRadius = isMobile ? 3.5 : 4.5;
       const cameraAngle = progress * Math.PI * 3.5;  // Gira conforme scrolleas
       const camX = Math.cos(cameraAngle) * cameraOrbitRadius;
-      const camY = Math.sin(cameraAngle) * cameraOrbitRadius * 0.4;
-      const camZ = 5 - (progress * 75);  // Centro sigue el scroll
-      
+      const camY = Math.sin(cameraAngle) * cameraOrbitRadius * 0.5 + 1.5;
+      const camZ = 3 - (progress * 25);  // Descenso más moderado
+
       camera.position.set(camX, camY, camZ);
-      camera.lookAt(0, 0, camZ);
+      camera.lookAt(0, 1, camZ - 3);
 
       // Hero object siempre visible en el centro
       heroGroup.visible = true;
