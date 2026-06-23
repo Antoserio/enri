@@ -30,36 +30,32 @@ export default function NavBar() {
         }`}
       >
         <div className="flex items-center justify-between px-[5vw] md:px-[10vw] py-5">
-          {/* Logo */}
-          <a href="#" className="font-display font-bold text-lg text-obsidian tracking-tight">
+          <a href="#" className="font-display font-bold text-lg text-quartz tracking-tight">
             Studio<span className="text-cobalt">.</span>
           </a>
 
-          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-10">
             {links.map(link => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-obsidian/50 hover:text-obsidian transition-colors font-body tracking-wide"
+                className="text-sm text-quartz/50 hover:text-quartz transition-colors font-body tracking-wide"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          {/* Mobile menu button */}
           <button
             className="md:hidden w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5 text-obsidian" />
+            <Menu className="w-5 h-5 text-quartz" />
           </button>
         </div>
       </motion.nav>
 
-      {/* Mobile fullscreen menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -68,14 +64,14 @@ export default function NavBar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-            style={{ background: "#F2F2F7" }}
+            style={{ background: "#0A0A0B" }}
           >
             <button
               className="absolute top-5 right-[5vw] w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md"
               onClick={() => setMenuOpen(false)}
               aria-label="Close menu"
             >
-              <X className="w-5 h-5 text-obsidian" />
+              <X className="w-5 h-5 text-quartz" />
             </button>
 
             <div className="flex flex-col items-center gap-8">
@@ -87,7 +83,7 @@ export default function NavBar() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.08 }}
-                  className="font-display font-bold text-4xl text-obsidian hover:text-cobalt transition-colors"
+                  className="font-display font-bold text-4xl text-quartz hover:text-cobalt transition-colors"
                 >
                   {link.label}
                 </motion.a>

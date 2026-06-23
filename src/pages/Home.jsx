@@ -4,6 +4,7 @@ import ScrollSpineScene from "@/components/three/ScrollSpineScene";
 import ScrollOverlay from "@/components/sections/ScrollOverlay";
 import MouseLightOverlay from "@/components/ui/MouseLightOverlay";
 import VideoModal from "@/components/ui/VideoModal";
+import BandcampPlayer from "@/components/ui/BandcampPlayer";
 import AboutSection from "@/components/sections/AboutSection";
 import FooterSection from "@/components/sections/FooterSection";
 import ContactSignal from "@/components/sections/ContactSignal";
@@ -58,10 +59,9 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
 
   return (
-    <div className="relative" style={{ background: "#F2F2F7" }}>
+    <div className="relative" style={{ background: "#0A0A0B" }}>
       <NavBar />
 
-      {/* Scroll-driven 3D experience */}
       <div id="scroll-experience" style={{ height: "700vh" }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden">
           <ScrollSpineScene projects={PROJECTS} onScreenClick={setSelectedProject} />
@@ -69,15 +69,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Mouse light effect — always visible */}
       <MouseLightOverlay />
 
-      {/* Regular content after the experience */}
       <AboutSection />
       <FooterSection />
       <ContactSignal />
+      <BandcampPlayer />
 
-      {/* Video modal — opens when clicking a screen */}
       {selectedProject && (
         <VideoModal
           project={selectedProject}

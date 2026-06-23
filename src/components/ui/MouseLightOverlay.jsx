@@ -39,55 +39,51 @@ export default function MouseLightOverlay() {
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Fade existing content — creates the "eraser" trail effect
+      // Gentle fade — eraser trail
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0, 0, 0, 0.035)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Additive blending for lights
       ctx.globalCompositeOperation = "lighter";
 
-      // Spotlight following mouse
-      const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 200);
-      gradient.addColorStop(0, "rgba(77, 77, 255, 0.15)");
-      gradient.addColorStop(0.3, "rgba(77, 77, 255, 0.06)");
+      // Small, soft spotlight
+      const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 90);
+      gradient.addColorStop(0, "rgba(180, 180, 255, 0.06)");
+      gradient.addColorStop(0.4, "rgba(120, 120, 255, 0.02)");
       gradient.addColorStop(1, "rgba(77, 77, 255, 0)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (!reducedMotion) {
-        // Spawn light particles on movement
         const dx = mouseX - prevX;
         const dy = mouseY - prevY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > 1) {
-          const count = Math.min(5, Math.floor(dist / 3));
-          for (let i = 0; i < count; i++) {
+        if (dist > 4) {
+          // Very few, small, slow sparks
+          if (Math.random() < 0.3) {
             particles.push({
-              x: mouseX + (Math.random() - 0.5) * 12,
-              y: mouseY + (Math.random() - 0.5) * 12,
-              vx: (Math.random() - 0.5) * 1.5,
-              vy: (Math.random() - 0.5) * 1.5 - 0.3,
+              x: mouseX + (Math.random() - 0.5) * 6,
+              y: mouseY + (Math.random() - 0.5) * 6,
+              vx: (Math.random() - 0.5) * 0.4,
+              vy: (Math.random() - 0.5) * 0.4 - 0.08,
               life: 1,
-              size: Math.random() * 2.5 + 0.5,
+              size: Math.random() * 1.2 + 0.3,
             });
           }
         }
 
-        // Update + draw particles
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy -= 0.015;
-          p.life -= 0.014;
+          p.life -= 0.008;
           if (p.life <= 0) {
             particles.splice(i, 1);
             continue;
           }
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(120, 120, 255, ${p.life * 0.55})`;
+          ctx.fillStyle = `rgba(160, 160, 255, ${p.life * 0.3})`;
           ctx.fill();
         }
       }

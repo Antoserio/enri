@@ -50,11 +50,11 @@ export default function ScrollOverlay({ projects }) {
             transition={{ duration: 0.8 }}
             className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
           >
-            <p className="text-xs md:text-sm tracking-widest uppercase text-obsidian/40 mb-4 font-body">
+            <p className="text-xs md:text-sm tracking-widest uppercase text-quartz/40 mb-4 font-body">
               Creative Studio
             </p>
             <h1
-              className="font-display font-bold text-obsidian leading-none"
+              className="font-display font-bold text-quartz leading-none"
               style={{ fontSize: "clamp(2.5rem, 8vw, 9rem)" }}
             >
               We Create
@@ -62,7 +62,7 @@ export default function ScrollOverlay({ projects }) {
               <span className="text-cobalt">Worlds</span>
             </h1>
             <p
-              className="mt-6 text-base md:text-lg text-obsidian/50 font-body font-light max-w-xl"
+              className="mt-6 text-base md:text-lg text-quartz/40 font-body font-light max-w-xl"
               style={{ lineHeight: 1.6 }}
             >
               Immersive digital experiences at the intersection of art, technology, and emotion.
@@ -72,10 +72,10 @@ export default function ScrollOverlay({ projects }) {
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute bottom-12 flex flex-col items-center gap-2"
             >
-              <span className="text-[10px] md:text-xs tracking-widest uppercase text-obsidian/30 font-body">
+              <span className="text-[10px] md:text-xs tracking-widest uppercase text-quartz/30 font-body">
                 Scroll to explore
               </span>
-              <ChevronDown className="w-4 h-4 text-obsidian/30" />
+              <ChevronDown className="w-4 h-4 text-quartz/30" />
             </motion.div>
           </motion.div>
         )}
@@ -96,12 +96,12 @@ export default function ScrollOverlay({ projects }) {
               {activeProject.category}
             </p>
             <h2
-              className="font-display font-bold text-obsidian"
+              className="font-display font-bold text-quartz"
               style={{ fontSize: "clamp(1.25rem, 3.5vw, 2.5rem)" }}
             >
               {activeProject.title}
             </h2>
-            <div className="mt-3 flex items-center justify-center gap-2 text-xs md:text-sm text-obsidian/40 font-body">
+            <div className="mt-3 flex items-center justify-center gap-2 text-xs md:text-sm text-quartz/30 font-body">
               <MousePointerClick className="w-4 h-4" />
               <span>Click to explore</span>
             </div>
@@ -120,9 +120,9 @@ export default function ScrollOverlay({ projects }) {
             className="absolute inset-0 flex items-center justify-center text-center"
           >
             <div className="flex flex-col items-center gap-3">
-              <p className="text-xs tracking-widest uppercase text-obsidian/40 font-body">Continue</p>
+              <p className="text-xs tracking-widest uppercase text-quartz/40 font-body">Continue</p>
               <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                <ChevronDown className="w-6 h-6 text-obsidian/40" />
+                <ChevronDown className="w-6 h-6 text-quartz/40" />
               </motion.div>
             </div>
           </motion.div>

@@ -20,7 +20,6 @@ export default function ContactSignal() {
 
   return (
     <>
-      {/* Floating contact trigger */}
       {!isOpen && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -29,7 +28,7 @@ export default function ContactSignal() {
         >
           <MagneticButton
             onClick={() => setIsOpen(true)}
-            className="w-14 h-14 rounded-full bg-cobalt text-white flex items-center justify-center shadow-lg animate-pulse-glow focus:outline-none focus:ring-2 focus:ring-cobalt focus:ring-offset-2"
+            className="w-14 h-14 rounded-full bg-cobalt text-white flex items-center justify-center shadow-lg animate-pulse-glow focus:outline-none focus:ring-2 focus:ring-cobalt focus:ring-offset-2 focus:ring-offset-obsidian"
             strength={0.4}
           >
             <Send className="w-5 h-5" />
@@ -37,7 +36,6 @@ export default function ContactSignal() {
         </motion.div>
       )}
 
-      {/* Full-screen contact form */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -46,9 +44,8 @@ export default function ContactSignal() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{ background: "#F2F2F7" }}
+            style={{ background: "#0A0A0B" }}
           >
-            {/* Close */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -57,7 +54,7 @@ export default function ContactSignal() {
             >
               <MagneticButton
                 onClick={() => setIsOpen(false)}
-                className="w-12 h-12 rounded-full border border-obsidian/10 flex items-center justify-center hover:bg-obsidian hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-cobalt"
+                className="w-12 h-12 rounded-full border border-quartz/10 flex items-center justify-center hover:bg-quartz hover:text-obsidian transition-all text-quartz focus:outline-none focus:ring-2 focus:ring-cobalt"
                 strength={0.2}
               >
                 <X className="w-5 h-5" />
@@ -74,8 +71,8 @@ export default function ContactSignal() {
                   <div className="w-16 h-16 rounded-full bg-cobalt/10 flex items-center justify-center mx-auto mb-6">
                     <Send className="w-6 h-6 text-cobalt" />
                   </div>
-                  <h3 className="font-display font-bold text-2xl text-obsidian mb-2">Signal Received</h3>
-                  <p className="text-obsidian/50 font-body">We'll be in touch soon.</p>
+                  <h3 className="font-display font-bold text-2xl text-quartz mb-2">Signal Received</h3>
+                  <p className="text-quartz/40 font-body">We'll be in touch soon.</p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -86,7 +83,7 @@ export default function ContactSignal() {
                 >
                   <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">The Signal</p>
                   <h2
-                    className="font-display font-bold text-obsidian mb-12"
+                    className="font-display font-bold text-quartz mb-12"
                     style={{ fontSize: "clamp(1.5rem, 3vw, 3rem)" }}
                   >
                     Let's Create Together
@@ -102,7 +99,7 @@ export default function ContactSignal() {
                         required
                         value={formState.name}
                         onChange={(e) => setFormState(s => ({ ...s, name: e.target.value }))}
-                        className="w-full bg-transparent border-b border-obsidian/15 pb-4 text-lg font-body text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-cobalt transition-colors"
+                        className="w-full bg-transparent border-b border-quartz/15 pb-4 text-lg font-body text-quartz placeholder:text-quartz/25 focus:outline-none focus:border-cobalt transition-colors"
                       />
                     </div>
                     <div>
@@ -114,7 +111,7 @@ export default function ContactSignal() {
                         required
                         value={formState.email}
                         onChange={(e) => setFormState(s => ({ ...s, email: e.target.value }))}
-                        className="w-full bg-transparent border-b border-obsidian/15 pb-4 text-lg font-body text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-cobalt transition-colors"
+                        className="w-full bg-transparent border-b border-quartz/15 pb-4 text-lg font-body text-quartz placeholder:text-quartz/25 focus:outline-none focus:border-cobalt transition-colors"
                       />
                     </div>
                     <div>
@@ -126,14 +123,14 @@ export default function ContactSignal() {
                         required
                         value={formState.message}
                         onChange={(e) => setFormState(s => ({ ...s, message: e.target.value }))}
-                        className="w-full bg-transparent border-b border-obsidian/15 pb-4 text-lg font-body text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-cobalt transition-colors resize-none"
+                        className="w-full bg-transparent border-b border-quartz/15 pb-4 text-lg font-body text-quartz placeholder:text-quartz/25 focus:outline-none focus:border-cobalt transition-colors resize-none"
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="mt-12 group flex items-center gap-3 text-lg font-display font-semibold text-obsidian hover:text-cobalt transition-colors focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md px-2 py-1"
+                    className="mt-12 group flex items-center gap-3 text-lg font-display font-semibold text-quartz hover:text-cobalt transition-colors focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md px-2 py-1"
                   >
                     Send Signal
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
