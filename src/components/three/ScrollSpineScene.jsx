@@ -59,8 +59,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x0A0A0B, isMobile ? 8 : 10, isMobile ? 40 : 50);
 
-    // Wider FOV on portrait/mobile so screens stay visible
-    const baseFov = isPortrait ? 75 : 65;
+    // Narrower FOV on portrait for a more controlled, orderly view
+    const baseFov = isPortrait ? 60 : 65;
     const camera = new THREE.PerspectiveCamera(baseFov, window.innerWidth / window.innerHeight, 0.1, 200);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
@@ -70,7 +70,15 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     // --- Spine Curve ---
-    const curvePoints = [
+    const curvePoints = isPortrait ? [
+      new THREE.Vector3(0, 0, 3),
+      new THREE.Vector3(0, 0, -8),
+      new THREE.Vector3(1.5, 0.3, -20),
+      new THREE.Vector3(-1.2, -0.3, -32),
+      new THREE.Vector3(2, 0.5, -44),
+      new THREE.Vector3(-1.5, -0.5, -56),
+      new THREE.Vector3(0, 0, -68),
+    ] : [
       new THREE.Vector3(0, 0, 3),
       new THREE.Vector3(0, 0, -8),
       new THREE.Vector3(3, 0.5, -20),
@@ -269,7 +277,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     // --- Resize ---
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
-      camera.fov = window.innerHeight > window.innerWidth ? 90 : 65;
+      camera.fov = window.innerHeight > window.innerWidth ? 60 : 65;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
@@ -307,10 +315,14 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
           }
         });
         if (nearestScreenPos && maxProx > 0.1) {
-          lookPos = lookPos.clone().lerp(nearestScreenPos, maxProx * 0.55);
+          const blend = maxProx * maxProx * 0.9;
+          lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
+          const posBlend = maxProx * maxProx * 0.35;
+          const adjustedCamPos = camPos.clone().lerp(nearestScreenPos, posBlend);
+          camera.position.copy(adjustedCamPos);
+        } else {
+          camera.position.copy(camPos);
         }
-
-        camera.position.copy(camPos);
         camera.lookAt(lookPos);
       }
 
