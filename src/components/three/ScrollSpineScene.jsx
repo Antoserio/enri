@@ -159,9 +159,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
 
       const group = new THREE.Group();
       group.position.copy(screenPos);
-      if (!isMobile) {
-        group.lookAt(isMobile ? new THREE.Vector3(0, 0, screenPos.z - 1) : curve.getPointAt(0.12 + (i / projects.length) * 0.72));
-      }
+      group.quaternion.copy(defaultQuat);
       scene.add(group);
 
       // Screen plane - mucho más grande en móvil para ser protagonista
