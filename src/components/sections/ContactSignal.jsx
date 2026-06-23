@@ -17,14 +17,19 @@ export default function ContactSignal() {
     return () => window.removeEventListener("open-contact", openContact);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ "form-name": "contact", ...formState }).toString(),
+    }).catch(() => {});
     setSent(true);
     setTimeout(() => {
       setSent(false);
       setIsOpen(false);
       setFormState({ name: "", email: "", message: "" });
-    }, 2000);
+    }, 2500);
   };
 
   return (
@@ -86,10 +91,13 @@ export default function ContactSignal() {
               ) : (
                 <motion.form
                   onSubmit={handleSubmit}
+                  name="contact"
+                  data-netlify="true"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.6 }}
                 >
+                  <input type="hidden" name="form-name" value="contact" />
                   <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">{t.contact.label}</p>
                   <h2
                     className="font-display font-bold text-quartz mb-12"
@@ -148,8 +156,8 @@ export default function ContactSignal() {
                   <div className="mt-10 pt-8 border-t border-quartz/10 flex flex-col items-center gap-6">
                     <p className="text-sm text-quartz/30 font-body text-center">
                       {t.contact.orEmail}{" "}
-                      <a href="mailto:enrilaforet@gmail.com" className="text-cobalt hover:underline">
-                        enrilaforet@gmail.com
+                      <a href="mailto:enriqueflute@gmail.com" className="text-cobalt hover:underline">
+                        enriqueflute@gmail.com
                       </a>
                     </p>
                     <SocialIcons />

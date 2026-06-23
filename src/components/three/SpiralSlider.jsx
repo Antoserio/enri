@@ -32,7 +32,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     // ── Scene & camera ───────────────────────────────────────────────────────
     const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0.8, 1.5, 9);
+    const mob = window.innerWidth < 768;
+    camera.position.set(mob ? 0.4 : 0.8, mob ? 0.8 : 1.5, mob ? 13 : 9);
     camera.lookAt(0, 0, 0);
 
     // ── Lights ───────────────────────────────────────────────────────────────
@@ -237,10 +238,13 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         // Vertex bending (physical curve as card rounds the spiral)
         applyBend(geos[i], origPos[i], normAngle);
 
-        // Opacity by frontness — hide back-facing cards completely to prevent y-wrap flash
-        const frontness = (Math.cos(normAngle) + 1) / 2;
-        mesh.visible = frontness > 0.26; // hide back ~45% — prevents y-wrap flash
-        mesh.material.opacity = 0.1 + 0.9 * frontness;
+        // Smooth fade zone — no hard pop: full opacity 0→90°, fades to 0 by 130°, wrap at 180° invisible
+        const absNorm = Math.abs(normAngle);
+        const FADE_S  = Math.PI * 0.50;   // 90°  — start fading
+        const FADE_E  = Math.PI * 0.72;   // 130° — fully transparent (wrap is at 180°)
+        const fade    = 1 - Math.max(0, Math.min(1, (absNorm - FADE_S) / (FADE_E - FADE_S)));
+        mesh.material.opacity = fade;
+        mesh.visible = fade > 0.01;
 
         // Track which card is at front
         if (Math.abs(normAngle) < minAngle) {
