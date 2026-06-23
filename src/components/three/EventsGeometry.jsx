@@ -97,9 +97,16 @@ export default function EventsGeometry({ sectionId = "eventos" }) {
       mesh.rotation.y += 0.003 + scrollBoost * 0.025;
       mesh.rotation.z += 0.001 + scrollBoost * 0.01;
 
+      // Movimiento suave basado en scroll
+      const scrollX = Math.sin(scrollProgressRef.current * Math.PI) * 2;
+      const scrollY = (scrollProgressRef.current - 0.5) * 3;
+      mesh.position.x = scrollX;
+      mesh.position.y = scrollY;
+
       wireframe.rotation.x = mesh.rotation.x;
       wireframe.rotation.y = mesh.rotation.y;
       wireframe.rotation.z = mesh.rotation.z;
+      wireframe.position.copy(mesh.position);
 
       particles.rotation.x = time;
       particles.rotation.y = time * 0.5;
