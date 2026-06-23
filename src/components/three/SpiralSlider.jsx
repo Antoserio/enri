@@ -2,14 +2,14 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
-const R        = 4.0;    // helix radius — more gap between cards
-const PITCH    = 0.78;   // smaller step — right-side cards appear higher
-const CARD_W   = 2.4;    // card width  (3D units)
-const CARD_H   = 1.35;   // card height (≈ 16:9)
-const SEGS_W   = 24;     // horizontal subdivisions (for bending)
-const SEGS_H   = 14;     // vertical subdivisions
-const MAX_BEND = 0.34;   // reduced bend → corners don't protrude into neighbours
-const REPEAT   = 2;      // 2× projects → 10 cards total, good density with breathing room
+const R        = 4.0;
+const PITCH    = 0.78;
+const CARD_W   = 2.4;
+const CARD_H   = 1.35;
+const SEGS_W   = 12;     // reduced from 24 — enough for bending, lighter GPU
+const SEGS_H   = 6;      // reduced from 14
+const MAX_BEND = 0.34;
+const REPEAT   = 2;
 const BLUE     = 0x1A56DB;
 const TWO_PI   = Math.PI * 2;
 
@@ -23,16 +23,16 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     const TOTAL = N * REPEAT;   // total card slots in helix (15 for 5 projects)
 
     // ── Renderer ─────────────────────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const mob = window.innerWidth < 768;
+    const renderer = new THREE.WebGLRenderer({ antialias: !mob, alpha: true });
     renderer.setClearColor(0x000000, 0);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, mob ? 1 : 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
 
     // ── Scene & camera ───────────────────────────────────────────────────────
     const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-    const mob = window.innerWidth < 768;
     camera.position.set(mob ? 0.4 : 0.8, mob ? 0.8 : 1.5, mob ? 13 : 9);
     camera.lookAt(0, 0, 0);
 
@@ -53,7 +53,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     let flashIntensity = 0;
 
     // ── Particles ─────────────────────────────────────────────────────────────
-    const pCount = 220;
+    const pCount = mob ? 60 : 120;
     const pPos   = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount; i++) {
       pPos[i * 3]     = (Math.random() - 0.5) * 22;
@@ -98,6 +98,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       if (!texCache[src]) {
         const tex = loader.load(src);
         tex.colorSpace = THREE.SRGBColorSpace;
+        tex.generateMipmaps = false;
+        tex.minFilter = THREE.LinearFilter;
         texCache[src] = tex;
       }
       return texCache[src];

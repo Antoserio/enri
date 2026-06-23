@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MousePointerClick } from "lucide-react";
 import NavBar from "@/components/sections/NavBar";
@@ -13,6 +13,14 @@ import ContactSignal from "@/components/sections/ContactSignal";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PROJECTS = [
+  {
+    id: "enri-portrait",
+    title: "Enri La Forêt",
+    category: "Compositora · Artista sonora",
+    description: "Compositora, instrumentista y artista sonora. Trabaja en la intersección entre el sonido, la imagen y el cuerpo.",
+    year: "2026",
+    image: "/enri-2.jpg",
+  },
   {
     id: "album-epv",
     title: "Espacio Premeditadamente Vacío",
@@ -88,14 +96,13 @@ export default function Home() {
   const [playerOpen,      setPlayerOpen]       = useState(false);
   const { t } = useLanguage();
 
-  const handleProjectClick = (project) => {
+  const handleProjectClick = useCallback((project) => {
     setSelectedProject(project);
-    // If project has non-EPV tracks, load them in the player and open it
     if (project.tracks && project.id !== "album-epv") {
       setAudioProject(project);
       setPlayerOpen(true);
     }
-  };
+  }, []);
 
   return (
     <div className="relative" style={{ background: "#0A0A0B" }}>
