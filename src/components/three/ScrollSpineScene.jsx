@@ -60,7 +60,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     scene.fog = new THREE.Fog(0x0A0A0B, isMobile ? 8 : 10, isMobile ? 40 : 50);
 
     // Wider FOV on portrait/mobile so screens stay visible
-    const baseFov = isPortrait ? 90 : 65;
+    const baseFov = isPortrait ? 75 : 65;
     const camera = new THREE.PerspectiveCamera(baseFov, window.innerWidth / window.innerHeight, 0.1, 200);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
@@ -141,7 +141,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 2.4 : 3.2;
+      const sideOffset = isPortrait ? 3.0 : 3.2;
       const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
@@ -151,8 +151,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenW = isPortrait ? 1.8 : 4.2;
-      const screenH = isPortrait ? 1.35 : 2.3;
+      const screenW = isPortrait ? 2.0 : 4.2;
+      const screenH = isPortrait ? 1.5 : 2.3;
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -165,8 +165,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameW = isPortrait ? 2.0 : 4.5;
-      const frameH = isPortrait ? 1.55 : 2.6;
+      const frameW = isPortrait ? 2.2 : 4.5;
+      const frameH = isPortrait ? 1.7 : 2.6;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
@@ -307,7 +307,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
           }
         });
         if (nearestScreenPos && maxProx > 0.1) {
-          lookPos = lookPos.clone().lerp(nearestScreenPos, maxProx);
+          lookPos = lookPos.clone().lerp(nearestScreenPos, maxProx * 0.55);
         }
 
         camera.position.copy(camPos);
