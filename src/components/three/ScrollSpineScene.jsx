@@ -149,7 +149,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 3.0 : 3.2;
+      const sideOffset = isPortrait ? 1.4 : 3.2;
       const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
@@ -317,8 +317,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
         if (nearestScreenPos && maxProx > 0.1) {
           const blend = maxProx * maxProx * 0.9;
           lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
-          const posBlend = maxProx * maxProx * 0.35;
-          const adjustedCamPos = camPos.clone().lerp(nearestScreenPos, posBlend);
+          const posBlend = isPortrait ? 0 : maxProx * maxProx * 0.35;
+          const adjustedCamPos = posBlend > 0 ? camPos.clone().lerp(nearestScreenPos, posBlend) : camPos;
           camera.position.copy(adjustedCamPos);
         } else {
           camera.position.copy(camPos);
