@@ -123,7 +123,7 @@ export default function EventsGeometry() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40 z-0"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-60 z-10"
       aria-hidden="true"
     />
   );
