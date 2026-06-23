@@ -32,8 +32,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     // ── Scene & camera ───────────────────────────────────────────────────────
     const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-    // Above-right view → diagonal cascade upper-left → center → lower-right
-    camera.position.set(1.5, 2.2, 8.5);
+    camera.position.set(0.8, 1.5, 9);
     camera.lookAt(0, 0, 0);
 
     // ── Lights ───────────────────────────────────────────────────────────────
@@ -129,8 +128,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     let pointerDown  = null;
     let lastFront    = -1;
 
-    // Scroll / wheel
-    const onWheel = (e) => { targetAngle += e.deltaY * 0.003; };
+    // Scroll / wheel — negative = advance right+down
+    const onWheel = (e) => { targetAngle -= e.deltaY * 0.003; };
 
     // Touch
     let touchY0 = 0, touchA0 = 0;
@@ -139,7 +138,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       touchA0 = targetAngle;
     };
     const onTouchMove = (e) => {
-      targetAngle = touchA0 - (e.touches[0].clientY - touchY0) * 0.005;
+      targetAngle = touchA0 + (e.touches[0].clientY - touchY0) * 0.005;
     };
 
     // Click detection (tap vs drag)
@@ -206,8 +205,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       const dt      = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Slow auto-advance
-      targetAngle += 0.004;
+      // Slow drift: right + down
+      targetAngle -= 0.0015;
 
       // Smooth damp
       scrollAngle += (targetAngle - scrollAngle) * 0.06;
@@ -229,17 +228,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         const y = -(normAngle / Math.PI) * maxY;   // spirals: sides are high/low
 
         mesh.position.set(x, y, z);
-
-        // Helix tangent direction (derivative of helix w.r.t. totalAngle)
-        // Makes cards tilt naturally along the spiral path
-        const tx =  R * Math.cos(totalAngle);
-        const ty = -maxY / Math.PI;             // constant pitch component
-        const tz = -R * Math.sin(totalAngle);
-        const tLen = Math.sqrt(tx*tx + ty*ty + tz*tz);
-        mesh.up.set(tx / tLen, ty / tLen, tz / tLen);
-
-        // Face outward from helix axis (card front = outward)
-        mesh.lookAt(0, y, 0);
+        mesh.up.set(0, 1, 0);          // reset to world-up (no tilt)
+        mesh.lookAt(0, y, 0);          // face outward from helix axis
 
         // Vertex bending (physical curve as card rounds the spiral)
         applyBend(geos[i], origPos[i], normAngle);
