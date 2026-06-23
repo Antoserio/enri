@@ -69,45 +69,42 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     renderer.setClearColor(0x0A0A0B, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // --- Spine Curve ---
-    const curvePoints = isPortrait ? [
-      new THREE.Vector3(0, 0, 3),
-      new THREE.Vector3(0, 0, -8),
-      new THREE.Vector3(1.5, 0.3, -20),
-      new THREE.Vector3(-1.2, -0.3, -32),
-      new THREE.Vector3(2, 0.5, -44),
-      new THREE.Vector3(-1.5, -0.5, -56),
-      new THREE.Vector3(0, 0, -68),
-    ] : [
-      new THREE.Vector3(0, 0, 3),
-      new THREE.Vector3(0, 0, -8),
-      new THREE.Vector3(3, 0.5, -20),
-      new THREE.Vector3(-2.5, -0.5, -32),
-      new THREE.Vector3(4, 1, -44),
-      new THREE.Vector3(-3, -1, -56),
-      new THREE.Vector3(0, 0, -68),
-    ];
-    const curve = new THREE.CatmullRomCurve3(curvePoints, false, "catmullrom", 0.5);
+    // --- Espiral 3D pura ---
+    const spiralRadius = isMobile ? 4 : 5;
+    const spiralHeight = 70;
+    const spiralTurns = 3;
+    
+    // Crear puntos de la espiral
+    const spiralPoints = [];
+    for (let i = 0; i <= 100; i++) {
+      const t = i / 100;
+      const angle = t * spiralTurns * Math.PI * 2;
+      const x = Math.cos(angle) * spiralRadius;
+      const y = Math.sin(angle) * spiralRadius;
+      const z = -8 - (t * spiralHeight);
+      spiralPoints.push(new THREE.Vector3(x, y, z));
+    }
+    const curve = new THREE.CatmullRomCurve3(spiralPoints, false, "catmullrom", 0.5);
 
-    // Spine tube
-    const tubeGeo = new THREE.TubeGeometry(curve, 300, 0.08, 8, false);
-    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.5 });
+    // Tubo de la espiral
+    const tubeGeo = new THREE.TubeGeometry(curve, 100, 0.1, 8, false);
+    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.4 });
     scene.add(new THREE.Mesh(tubeGeo, tubeMat));
 
-    // Glow tube
-    const glowGeo = new THREE.TubeGeometry(curve, 300, 0.3, 8, false);
-    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending });
+    // Brillo de la espiral
+    const glowGeo = new THREE.TubeGeometry(curve, 100, 0.25, 8, false);
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending });
     scene.add(new THREE.Mesh(glowGeo, glowMat));
 
-    // Vertebrae
+    // Vértebras
     const vertebrae = [];
-    for (let i = 0; i < 45; i++) {
-      const t = i / 45;
+    for (let i = 0; i < 30; i++) {
+      const t = i / 30;
       const point = curve.getPointAt(t);
       const tangent = curve.getTangentAt(t);
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.3, 0.015, 6, 16),
-        new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.2 })
+        new THREE.TorusGeometry(0.25, 0.02, 6, 16),
+        new THREE.MeshBasicMaterial({ color: 0x6C6CFF, transparent: true, opacity: 0.2 })
       );
       ring.position.copy(point);
       ring.lookAt(point.clone().add(tangent));
@@ -143,41 +140,24 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const tempObj = new THREE.Object3D();
 
     projects.forEach((project, i) => {
-       // En móvil: ESPIRAL 3D / En desktop: curve complex
-       let screenPos, defaultQuat;
+       // ESPIRAL: todos los proyectos distribuidos en la curva
+       const spiralT = (i / projects.length) * 0.95;
+       const point = curve.getPointAt(spiralT);
+       const tangent = curve.getTangentAt(spiralT).normalize();
 
-       if (isMobile) {
-         // ESPIRAL: las imágenes rotan en círculo alrededor del eje Z
-         const angle = (i / projects.length) * Math.PI * 2;  // Vuelta completa
-         const spiralRadius = 4;
-         const xPos = Math.cos(angle) * spiralRadius;
-         const yPos = Math.sin(angle) * spiralRadius;
-         const zPos = -8 - (i / projects.length) * 50;
-         screenPos = new THREE.Vector3(xPos, yPos, zPos);
-         defaultQuat = new THREE.Quaternion();
-       } else {
-         // Desktop: original curve logic
-         const t = 0.12 + (i / projects.length) * 0.72;
-         const point = curve.getPointAt(t);
-         const tangent = curve.getTangentAt(t).normalize();
-         const up = new THREE.Vector3(0, 1, 0);
-         const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
-         const side = i % 2 === 0 ? 1 : -1;
-         const sideOffset = isPortrait ? 0.8 : 3.2;
-         screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
+       const up = new THREE.Vector3(0, 1, 0);
+       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+       const screenOffset = isMobile ? 1.5 : 2.5;
+       const screenPos = point.clone().add(right.multiplyScalar(screenOffset));
 
-         const tempGroup = new THREE.Group();
-         tempGroup.position.copy(screenPos);
-         tempGroup.lookAt(point);
-         defaultQuat = tempGroup.quaternion.clone();
-       }
+       const tempGroup = new THREE.Group();
+       tempGroup.position.copy(screenPos);
+       tempGroup.lookAt(point);
+       const defaultQuat = tempGroup.quaternion.clone();
 
-      const group = new THREE.Group();
-      group.position.copy(screenPos);
-      if (!isMobile) {
-        group.lookAt(isMobile ? new THREE.Vector3(0, 0, screenPos.z - 1) : curve.getPointAt(0.12 + (i / projects.length) * 0.72));
-      }
-      scene.add(group);
+       const group = new THREE.Group();
+       group.position.copy(screenPos);
+       scene.add(group);
 
       // Screen plane - mucho más grande en móvil para ser protagonista
       const screenW = isMobile ? 2.2 : (isPortrait ? 0.12 : 3.0);
@@ -211,8 +191,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       light.position.set(0, 0, 1.5);
       group.add(light);
 
-      const t = isMobile ? (i / projects.length) : (0.12 + (i / projects.length) * 0.72);
-      screenData.push({ screen, frame, group, baseY: screenPos.y, t, index: i, defaultQuat });
+      screenData.push({ screen, frame, group, baseY: screenPos.y, t: spiralT, index: i, defaultQuat });
     });
 
     // --- Scroll remap (dwell zones at each screen) ---
@@ -317,109 +296,55 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       // Camera follows curve with remapped progress (dwells at each screen)
       const camT = progress < 0.02 ? 0 : remapProgress(progress, stops);
 
-      if (isMobile) {
-        // En móvil: cámara gira alrededor de la espiral, mirando hacia el centro
-        const spiralRadius = 5;
-        const cameraAngle = progress * Math.PI * 4;  // Gira conforme scrolleas
-        const camX = Math.cos(cameraAngle) * spiralRadius;
-        const camY = Math.sin(cameraAngle) * spiralRadius * 0.6;
-        const centerZ = -25 + (progress * 55);  // Centro de la cámara sigue el scroll
-        camera.position.set(camX, camY, centerZ);
-        camera.lookAt(0, 0, centerZ);
-      } else {
-        // Desktop: original complex curve logic
-        if (progress < 0.02) {
-          camera.position.set(0, 0, 2);
-          camera.lookAt(0, 0, -6);
-        } else {
-          const camPos = curve.getPointAt(camT);
-          const lookT = Math.min(0.999, camT + 0.04);
-          let lookPos = curve.getPointAt(lookT);
+      // Cámara orbita el centro de la espiral en AMBOS dispositivos
+      const cameraOrbitRadius = isMobile ? 4 : 6;
+      const cameraAngle = progress * Math.PI * 3.5;  // Gira conforme scrolleas
+      const camX = Math.cos(cameraAngle) * cameraOrbitRadius;
+      const camY = Math.sin(cameraAngle) * cameraOrbitRadius * 0.4;
+      const camZ = 5 - (progress * 75);  // Centro sigue el scroll
+      
+      camera.position.set(camX, camY, camZ);
+      camera.lookAt(0, 0, camZ);
 
-          // Blend lookAt toward nearest screen to center it in view
-          let maxProx = 0;
-          let nearestScreenPos = null;
-          screenData.forEach(({ group, t }) => {
-            const d = Math.abs(camT - t);
-            const prox = Math.max(0, 1 - d * 5);
-            if (prox > maxProx) {
-              maxProx = prox;
-              nearestScreenPos = group.position;
-            }
-          });
-          if (nearestScreenPos && maxProx > 0.1) {
-            const blend = maxProx * maxProx * 0.9;
-            lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
-            const posBlend = maxProx * maxProx * 0.35;
-            const adjustedCamPos = camPos.clone().lerp(nearestScreenPos, posBlend);
-            camera.position.copy(adjustedCamPos);
-          } else {
-            camera.position.copy(camPos);
-          }
-          camera.lookAt(lookPos);
-        }
-      }
-
-      // Hero object
-      const heroFadeOut = isMobile ? 0.25 : 0.1;
-      const heroFade = Math.max(0, 1 - progress / heroFadeOut);
-      heroGroup.visible = heroFade > 0.01;
-      if (heroGroup.visible) {
-        if (!reducedMotion) {
-          heroMesh.rotation.x += 0.003;
-          heroMesh.rotation.y += 0.004;
-          heroWire.rotation.x = heroMesh.rotation.x;
-          heroWire.rotation.y = heroMesh.rotation.y;
-          const scale = 1 + Math.sin(time * 0.5) * 0.03;
-          heroMesh.scale.setScalar(scale);
-          heroWire.scale.setScalar(scale);
-        }
-        heroMat.opacity = 0.9 * heroFade;
-        heroWire.material.opacity = 0.25 * heroFade;
-      }
-
-      // Screens — face camera when near center
+      // Hero object siempre visible en el centro
+      heroGroup.visible = true;
       if (!reducedMotion) {
-        screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
-          if (isMobile) {
-            // En móvil: ESPIRAL DINÁMICA que baja con el scroll
-            const scrollOffset = progress * projects.length;
-            const itemProgress = (scrollOffset - index) % projects.length;
-            const angle = (itemProgress / projects.length) * Math.PI * 2;
-            const spiralRadius = 4;
+        heroMesh.rotation.x += 0.003;
+        heroMesh.rotation.y += 0.004;
+        heroWire.rotation.x = heroMesh.rotation.x;
+        heroWire.rotation.y = heroMesh.rotation.y;
+        const scale = 1.5 + Math.sin(time * 0.5) * 0.1;
+        heroMesh.scale.setScalar(scale);
+        heroWire.scale.setScalar(scale);
+      }
+      heroMat.opacity = 0.95;
+      heroWire.material.opacity = 0.3;
 
-            // Posición en espiral bajando dinámicamente
-            const xPos = Math.cos(angle) * spiralRadius;
-            const yPos = Math.sin(angle) * spiralRadius;
-            const zPos = -8 - (index / projects.length) * 50 - (progress * 50);
-            group.position.set(xPos, yPos, zPos);
+      // Screens — sigue la espiral dinámicamente
+      if (!reducedMotion) {
+        screenData.forEach(({ screen, frame, group, t, index, defaultQuat }) => {
+          // Todas las pantallas siguen la espiral con offset dinámico
+          const scrollT = progress * 0.95;
+          const tOffset = (t - scrollT + 1) % 0.95;
 
-            // Orienta cada pantalla hacia la cámara para máxima visibilidad
-            tempObj.position.copy(group.position);
-            tempObj.lookAt(camera.position);
-            const cameraQuat = tempObj.quaternion.clone();
-            group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, 0.8);
+          const point = curve.getPointAt(Math.min(0.99, tOffset + scrollT));
+          const tangent = curve.getTangentAt(Math.min(0.99, tOffset + scrollT)).normalize();
+          const up = new THREE.Vector3(0, 1, 0);
+          const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
 
-            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 2.5);
-            screen.material.opacity = 0.5 + proximity * 0.5;
-            frame.material.opacity = 0.1 + proximity * 0.3;
-            screen.scale.setScalar(0.85 + proximity * 0.4);
-          } else {
-            // Desktop: original logic
-            const dist = Math.abs(camT - t);
-            const proximity = Math.max(0, 1 - dist * 5);
+          const screenOffset = isMobile ? 1.5 : 2.5;
+          group.position.copy(point.clone().add(right.multiplyScalar(screenOffset)));
 
-            tempObj.position.copy(group.position);
-            tempObj.lookAt(camera.position);
-            const cameraQuat = tempObj.quaternion.clone();
-            const limitedProximity = Math.min(proximity, 0.35);
-            group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, limitedProximity);
+          // Orienta hacia la cámara
+          tempObj.position.copy(group.position);
+          tempObj.lookAt(camera.position);
+          group.quaternion.copy(tempObj.quaternion);
 
-            screen.material.opacity = 0.3 + proximity * 0.7;
-            frame.material.opacity = 0.04 + proximity * 0.35;
-            screen.scale.setScalar(1 + proximity * 0.12);
-            group.position.y = baseY + Math.sin(time * 0.4 + index) * 0.06;
-          }
+          // Proximidad para opacidad
+          const proximity = Math.max(0, 1 - Math.abs(tOffset) * 8);
+          screen.material.opacity = 0.4 + proximity * 0.6;
+          frame.material.opacity = 0.08 + proximity * 0.4;
+          screen.scale.setScalar(0.9 + proximity * 0.5);
         });
 
         particles.rotation.y = time * 0.01;
