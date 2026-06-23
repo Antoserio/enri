@@ -24,9 +24,9 @@ function SpiralSliderDesktop({ projects, onProjectClick, onActiveProject }) {
 
   const radius = Math.min(vw * 0.40, 290);
   const persp  = radius * 3;
-  const cardW  = Math.min(vw * 0.28, 210);
+  const cardW  = Math.min(vw * 0.36, 300);
   const cardH  = cardW * 0.5625; // 16:9 landscape
-  const yStep  = 20;
+  const yStep  = 22;
   const N      = projects.length;
 
   // Three.js sphere (transparent canvas behind CSS cards)

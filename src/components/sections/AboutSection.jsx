@@ -34,7 +34,7 @@ export default function AboutSection() {
           >
             <div className="flex flex-col md:flex-row md:items-start gap-8 mb-10">
               <img
-                src="https://f4.bcbits.com/img/a2297333929_10.jpg"
+                src="/EPV_Portada-01.jpg"
                 alt="Espacio Premeditadamente Vacío — portada"
                 className="w-40 md:w-52 aspect-square object-cover rounded-sm shrink-0"
                 style={{ boxShadow: "0 0 40px rgba(77,77,255,0.15)" }}

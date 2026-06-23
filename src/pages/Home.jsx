@@ -19,7 +19,14 @@ const PROJECTS = [
     category: "LP · Live/AV · 2026",
     description: "Primer álbum en solitario. Un proyecto dual integrado por un Live/AV y un LP publicado en marzo de 2026 en digital y en vinilo con el sello Pinorama Records. La arquitectura sonora transiciona desde beats de techno industrial hasta armonías luminosas y texturas ambientales.",
     year: "2026",
-    image: "/enri-1.jpg",
+    image: "/EPV_Portada-01.jpg",
+    tracks: [
+      { n: "1", title: "El muro",                    duration: "06:09", file: "/epv-1-el-muro.wav" },
+      { n: "2", title: "Bil'in",                      duration: "05:22", file: "/epv-2-bilin.wav" },
+      { n: "3", title: "¿Hasta cuándo?",             duration: "04:20", file: "/epv-3-hasta-cuando.wav" },
+      { n: "4", title: "Sumergirse en el naufragio", duration: "06:08", file: "/epv-4-sumergirse.wav" },
+      { n: "5", title: "La brecha",                   duration: "05:46", file: "/epv-5-la-brecha.wav" },
+    ],
   },
   {
     id: "esta-linea",
@@ -27,8 +34,14 @@ const PROJECTS = [
     category: "Performance · Archivo · 2023",
     description: "Performance y archivo creado con Helena Mariño. Toma su nombre de un fragmento de Permanente obra negra de Vivian Abenshushan. La cocina como espacio discursivo y de resistencia femenina durante el franquismo.",
     year: "2023",
-    image: "/enri-live.jpg",
+    image: "/portada-elinea.png",
     link: "https://estalinea.es/",
+    tracks: [
+      { n: "1", title: "Dpto. de jardinería",                          file: "/elinea-1-jardineria.wav" },
+      { n: "2", title: "Dpto. de colchones, almohadas, camas y sueños", file: "/elinea-2-colchones.wav" },
+      { n: "3", title: "Dpto. de viajes",                              file: "/elinea-3-viajes.wav" },
+      { n: "4", title: "Dpto. de artefactos analógicos",               file: "/elinea-4-artefactos.wav" },
+    ],
   },
   {
     id: "los-banistas",
@@ -44,7 +57,14 @@ const PROJECTS = [
     category: "Encargo · 2024",
     description: "Cápsulas sonoras creadas para el ciclo \"A la hora del té con Alicia\" de CaixaForum. Textos de Lewis Carroll. Música e interpretación: Enri La Forêt. Voz: Helena Mariño.",
     year: "2024",
-    image: "/poesia-2.jpg",
+    image: "/portada-aiw.png",
+    tracks: [
+      { n: "1", title: "¿Aún no has resuelto el enigma? Matemáticas y literatura", file: "/aiw-1.wav" },
+      { n: "2", title: "La hora de los sentidos",                                   file: "/aiw-2.wav" },
+      { n: "3", title: "El disparate. Placer y consuelo de lo absurdo",             file: "/aiw-3.wav" },
+      { n: "4", title: "Tiempo de rebeldes",                                        file: "/aiw-4.wav" },
+      { n: "5", title: "La hora de (algunas) cosas rebeldes",                       file: "/aiw-5.wav" },
+    ],
   },
   {
     id: "citas-sonoras-2025",
@@ -52,7 +72,12 @@ const PROJECTS = [
     category: "Encargo · 2024–2025",
     description: "Citas sonoras compuestas para el Book Friday de Madrid (2024 y 2025), organizado por la Asociación Cuesta de Moyano. Música: Enri La Forêt. Voz: Helena Mariño.",
     year: "2025",
-    image: "/poesia-3.jpg",
+    image: "/portada-bf.png",
+    tracks: [
+      { n: "1", title: "Samantha Harvey · Un malestar indefinido", file: "/bf-1-samantha.wav" },
+      { n: "2", title: "Camila Sosa Villada · El viaje inútil",    file: "/bf-2-camila.wav" },
+      { n: "3", title: "Silvina Ocampo · Transformation",          file: "/bf-3-silvina.wav" },
+    ],
   },
 ];
 
