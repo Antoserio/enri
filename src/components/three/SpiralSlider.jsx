@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
-const R        = 3.6;    // helix radius (wider = more gap between cards)
-const PITCH    = 0.92;   // vertical step — less drop so lower cards sit closer
+const R        = 4.0;    // helix radius — more gap between cards
+const PITCH    = 0.78;   // smaller step — right-side cards appear higher
 const CARD_W   = 2.4;    // card width  (3D units)
 const CARD_H   = 1.35;   // card height (≈ 16:9)
 const SEGS_W   = 24;     // horizontal subdivisions (for bending)
@@ -128,8 +128,11 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     let pointerDown  = null;
     let lastFront    = -1;
 
-    // Wheel on the canvas only — preventDefault stops page from also scrolling
-    const onWheel = (e) => { e.preventDefault(); targetAngle -= e.deltaY * 0.003; };
+    // Wheel on the canvas only — clamp deltaY so fast scroll can't skip cards past the wrap point
+    const onWheel = (e) => {
+      e.preventDefault();
+      targetAngle -= Math.max(-60, Math.min(60, e.deltaY)) * 0.003;
+    };
 
     // Touch
     let touchY0 = 0, touchA0 = 0;
@@ -236,7 +239,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
 
         // Opacity by frontness — hide back-facing cards completely to prevent y-wrap flash
         const frontness = (Math.cos(normAngle) + 1) / 2;
-        mesh.visible = frontness > 0.18; // hide back 36% — prevents y-wrap flash
+        mesh.visible = frontness > 0.26; // hide back ~45% — prevents y-wrap flash
         mesh.material.opacity = 0.1 + 0.9 * frontness;
 
         // Track which card is at front
