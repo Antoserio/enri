@@ -129,9 +129,9 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     let pointerDown  = null;
     let lastFront    = -1;
 
-    // Wheel on the canvas only — clamp deltaY so fast scroll can't skip cards past the wrap point
+    // Wheel on the canvas — clamp deltaY so fast scroll can't skip cards past the wrap point.
+    // No preventDefault: lets the page scroll normally while still rotating the spiral.
     const onWheel = (e) => {
-      e.preventDefault();
       targetAngle -= Math.max(-60, Math.min(60, e.deltaY)) * 0.003;
     };
 
@@ -168,7 +168,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       }
     };
 
-    mount.addEventListener("wheel",        onWheel,       { passive: false }); // passive:false allows preventDefault
+    mount.addEventListener("wheel",        onWheel,       { passive: true });
     mount.addEventListener("touchstart",   onTouchStart,  { passive: true });
     mount.addEventListener("touchmove",    onTouchMove,   { passive: true });
     mount.addEventListener("pointerdown",  onPointerDown);
