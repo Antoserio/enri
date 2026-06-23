@@ -2,14 +2,14 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
-const R        = 3.0;    // helix radius
-const PITCH    = 0.55;   // vertical gap (tight, more cards visible)
+const R        = 3.2;    // helix radius
+const PITCH    = 0.88;   // vertical gap — breathing room between cards
 const CARD_W   = 2.4;    // card width  (3D units)
 const CARD_H   = 1.35;   // card height (≈ 16:9)
 const SEGS_W   = 24;     // horizontal subdivisions (for bending)
 const SEGS_H   = 14;     // vertical subdivisions
-const MAX_BEND = 0.55;   // max centre-bulge depth (inward)
-const REPEAT   = 3;      // repeat cards N times around helix (dense + infinite feel)
+const MAX_BEND = 0.52;   // max centre-bulge depth (inward)
+const REPEAT   = 2;      // 2× projects → 10 cards total, good density with breathing room
 const BLUE     = 0x1A56DB;
 const TWO_PI   = Math.PI * 2;
 
@@ -32,8 +32,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     // ── Scene & camera ───────────────────────────────────────────────────────
     const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-    // Slightly above-right → cards appear to cascade diagonally down-right
-    camera.position.set(0.6, 1.4, 9);
+    // Above-right view → diagonal cascade upper-left → center → lower-right
+    camera.position.set(1.5, 2.2, 8.5);
     camera.lookAt(0, 0, 0);
 
     // ── Lights ───────────────────────────────────────────────────────────────
@@ -229,7 +229,16 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         const y = -(normAngle / Math.PI) * maxY;   // spirals: sides are high/low
 
         mesh.position.set(x, y, z);
-        // Front face points outward from helix axis
+
+        // Helix tangent direction (derivative of helix w.r.t. totalAngle)
+        // Makes cards tilt naturally along the spiral path
+        const tx =  R * Math.cos(totalAngle);
+        const ty = -maxY / Math.PI;             // constant pitch component
+        const tz = -R * Math.sin(totalAngle);
+        const tLen = Math.sqrt(tx*tx + ty*ty + tz*tz);
+        mesh.up.set(tx / tLen, ty / tLen, tz / tLen);
+
+        // Face outward from helix axis (card front = outward)
         mesh.lookAt(0, y, 0);
 
         // Vertex bending (physical curve as card rounds the spiral)
