@@ -176,9 +176,9 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       }
       scene.add(group);
 
-      // Screen plane - más grande en móvil
-      const screenW = isMobile ? 1.2 : (isPortrait ? 0.12 : 3.0);
-      const screenH = isMobile ? 1.8 : (isPortrait ? 0.18 : 1.7);
+      // Screen plane - mucho más grande en móvil para ser protagonista
+      const screenW = isMobile ? 2.2 : (isPortrait ? 0.12 : 3.0);
+      const screenH = isMobile ? 3.2 : (isPortrait ? 0.18 : 1.7);
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -375,11 +375,11 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       if (!reducedMotion) {
         screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
           if (isMobile) {
-            // En móvil: las tarjetas siempre frontal, escala basada en distancia al scroll
-            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 3);
-            screen.material.opacity = 0.4 + proximity * 0.6;
-            frame.material.opacity = 0.08 + proximity * 0.25;
-            screen.scale.setScalar(0.95 + proximity * 0.1);
+            // En móvil: las imágenes son el protagonista, escala dramática
+            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 2.5);
+            screen.material.opacity = 0.5 + proximity * 0.5;
+            frame.material.opacity = 0.1 + proximity * 0.3;
+            screen.scale.setScalar(0.85 + proximity * 0.4);  // Escala más dramática: de 0.85 a 1.25
           } else {
             // Desktop: original logic
             const dist = Math.abs(camT - t);
