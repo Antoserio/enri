@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
-export default function EventsGeometry() {
+export default function EventsGeometry({ sectionId = "eventos" }) {
   const canvasRef = useRef(null);
+  const scrollProgressRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -75,14 +76,26 @@ export default function EventsGeometry() {
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particles);
 
+    const onScroll = () => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = section.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const progress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (viewportHeight + sectionHeight)));
+      scrollProgressRef.current = progress;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     let animId;
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const time = Date.now() * 0.0003;
+      const scrollBoost = scrollProgressRef.current * Math.PI * 2;
 
-      mesh.rotation.x += 0.002;
-      mesh.rotation.y += 0.003;
-      mesh.rotation.z += 0.001;
+      mesh.rotation.x += 0.002 + scrollBoost * 0.015;
+      mesh.rotation.y += 0.003 + scrollBoost * 0.025;
+      mesh.rotation.z += 0.001 + scrollBoost * 0.01;
 
       wireframe.rotation.x = mesh.rotation.x;
       wireframe.rotation.y = mesh.rotation.y;
@@ -110,6 +123,7 @@ export default function EventsGeometry() {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", onScroll);
       geometry.dispose();
       material.dispose();
       wireGeometry.dispose();
@@ -118,7 +132,7 @@ export default function EventsGeometry() {
       particleMaterial.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [sectionId]);
 
   return (
     <canvas
