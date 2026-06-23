@@ -74,6 +74,7 @@ export default function ScrollOverlay({ projects }) {
   const showEnd = camT > 0.96;
 
   let activeProject = null;
+  let activeProjectIndex = 0;
   let activeOpacity = 0;
   if (!showHero && !showEnd) {
     projects.forEach((p, i) => {
@@ -84,6 +85,7 @@ export default function ScrollOverlay({ projects }) {
         if (opacity > activeOpacity) {
           activeOpacity = opacity;
           activeProject = p;
+          activeProjectIndex = i;
         }
       }
     });
@@ -141,7 +143,7 @@ export default function ScrollOverlay({ projects }) {
             animate={{ opacity: activeOpacity, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-16 md:bottom-24 left-1/2 -translate-x-1/2 text-center"
+            className={`absolute bottom-16 md:bottom-24 ${activeProjectIndex % 2 === 0 ? 'left-12 md:left-24 text-left' : 'right-12 md:right-24 text-right'}`}
           >
             <p className="text-[10px] md:text-xs tracking-widest uppercase text-cobalt mb-2 font-body">
               {activeProject.category}
