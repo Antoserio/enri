@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Instagram } from "lucide-react";
 import MagneticButton from "@/components/ui/MagneticButton";
+import BandcampIcon from "@/components/ui/BandcampIcon";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -16,6 +17,7 @@ export default function NavBar() {
   const links = [
     { label: "Obra", href: "#scroll-experience" },
     { label: "About", href: "#about" },
+    { label: "Contacto", href: "#contact" },
     { label: "Bandcamp", href: "https://enrilaforet.bandcamp.com/album/espacio-premeditadamente-vac-o" },
   ];
 
@@ -89,6 +91,32 @@ export default function NavBar() {
                 </motion.a>
               ))}
             </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center gap-6 mt-8"
+            >
+              <a
+                href="https://www.instagram.com/enrilaforet/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-11 h-11 rounded-full border border-quartz/15 flex items-center justify-center text-quartz/50 hover:text-cobalt hover:border-cobalt/40 transition-all"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://enrilaforet.bandcamp.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Bandcamp"
+                className="w-11 h-11 rounded-full border border-quartz/15 flex items-center justify-center text-quartz/50 hover:text-cobalt hover:border-cobalt/40 transition-all"
+              >
+                <BandcampIcon className="w-5 h-5" />
+              </a>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

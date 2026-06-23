@@ -1,10 +1,11 @@
 import React from "react";
+import { Heart } from "lucide-react";
 
 export default function FooterSection() {
   return (
     <footer className="relative py-16 md:py-24 border-t border-quartz/10" style={{ background: "#0A0A0B" }}>
       <div className="px-[5vw] md:px-[10vw]">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-quartz/10">
           <div className="md:col-span-4">
             <p className="font-display font-bold text-xl text-quartz">Enri La Forêt</p>
             <p className="text-sm text-quartz/30 font-body mt-3 leading-relaxed">
@@ -37,6 +38,20 @@ export default function FooterSection() {
               <p className="text-sm text-quartz/25 font-body">© 2026 · all rights reserved</p>
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8">
+          <p className="text-xs text-quartz/25 font-body tracking-wide">
+            © 2026 Enri La Forêt · All rights reserved
+          </p>
+          <a
+            href="https://immerso.live"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-quartz/25 hover:text-cobalt transition-colors font-body tracking-wide"
+          >
+            powered with <Heart className="w-3 h-3 text-cobalt fill-cobalt" /> by IMMERSO.LIVE
+          </a>
         </div>
       </div>
     </footer>
