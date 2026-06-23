@@ -159,8 +159,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenW = isPortrait ? 2.0 : 4.2;
-      const screenH = isPortrait ? 1.5 : 2.3;
+      const screenW = isPortrait ? 1.6 : 4.2;
+      const screenH = isPortrait ? 1.2 : 2.3;
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -173,8 +173,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameW = isPortrait ? 2.2 : 4.5;
-      const frameH = isPortrait ? 1.7 : 2.6;
+      const frameW = isPortrait ? 1.8 : 4.5;
+      const frameH = isPortrait ? 1.4 : 2.6;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
