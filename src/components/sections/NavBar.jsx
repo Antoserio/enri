@@ -14,9 +14,9 @@ export default function NavBar() {
   }, []);
 
   const links = [
-    { label: "Work", href: "#work" },
+    { label: "Work", href: "#scroll-experience" },
     { label: "About", href: "#about" },
-    { label: "Contact", href: "#contact" },
+    { label: "Contact", href: "mailto:hello@studio.com" },
   ];
 
   return (

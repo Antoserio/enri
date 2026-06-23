@@ -1,0 +1,306 @@
+import React, { useRef, useEffect } from "react";
+import * as THREE from "three";
+
+export default function ScrollSpineScene({ projects, onScreenClick }) {
+  const canvasRef = useRef(null);
+  const scrollProgress = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // --- Scene ---
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0xF2F2F7, 12, 55);
+
+    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 200);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0xF2F2F7, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // --- Spine Curve ---
+    const curvePoints = [
+      new THREE.Vector3(0, 0, 3),
+      new THREE.Vector3(0, 0, -8),
+      new THREE.Vector3(3, 0.5, -20),
+      new THREE.Vector3(-2.5, -0.5, -32),
+      new THREE.Vector3(4, 1, -44),
+      new THREE.Vector3(-3, -1, -56),
+      new THREE.Vector3(0, 0, -68),
+    ];
+    const curve = new THREE.CatmullRomCurve3(curvePoints, false, "catmullrom", 0.5);
+
+    // Spine tube
+    const tubeGeo = new THREE.TubeGeometry(curve, 300, 0.1, 8, false);
+    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.6 });
+    scene.add(new THREE.Mesh(tubeGeo, tubeMat));
+
+    // Glow tube (additive)
+    const glowGeo = new THREE.TubeGeometry(curve, 300, 0.35, 8, false);
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending });
+    scene.add(new THREE.Mesh(glowGeo, glowMat));
+
+    // Vertebrae
+    const vertebrae = [];
+    for (let i = 0; i < 45; i++) {
+      const t = i / 45;
+      const point = curve.getPointAt(t);
+      const tangent = curve.getTangentAt(t);
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(0.35, 0.02, 6, 16),
+        new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.25 })
+      );
+      ring.position.copy(point);
+      ring.lookAt(point.clone().add(tangent));
+      scene.add(ring);
+      vertebrae.push(ring);
+    }
+
+    // --- Hero Object ---
+    const heroGroup = new THREE.Group();
+    heroGroup.position.set(0, 0, -6);
+
+    const heroGeo = new THREE.IcosahedronGeometry(1.6, 1);
+    const heroMat = new THREE.MeshPhysicalMaterial({
+      color: 0x4D4DFF, metalness: 0.1, roughness: 0.05,
+      transmission: 0.9, thickness: 1.5, ior: 2.4, clearcoat: 1,
+      clearcoatRoughness: 0.1, transparent: true, opacity: 0.85,
+    });
+    const heroMesh = new THREE.Mesh(heroGeo, heroMat);
+    heroGroup.add(heroMesh);
+
+    const heroWire = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.62, 1),
+      new THREE.MeshBasicMaterial({ color: 0x4D4DFF, wireframe: true, transparent: true, opacity: 0.2 })
+    );
+    heroGroup.add(heroWire);
+    scene.add(heroGroup);
+
+    // --- Screens ---
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.setCrossOrigin("anonymous");
+    const screens = [];
+    const screenData = [];
+
+    projects.forEach((project, i) => {
+      const t = 0.12 + (i / projects.length) * 0.72;
+      const point = curve.getPointAt(t);
+      const tangent = curve.getTangentAt(t).normalize();
+      const up = new THREE.Vector3(0, 1, 0);
+      const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+      const side = i % 2 === 0 ? 1 : -1;
+      const screenPos = point.clone().add(right.multiplyScalar(3.5 * side));
+
+      const group = new THREE.Group();
+      group.position.copy(screenPos);
+      group.lookAt(point);
+
+      // Screen plane
+      const screenGeo = new THREE.PlaneGeometry(4.5, 2.5);
+      const texture = textureLoader.load(project.image);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      const screenMat = new THREE.MeshBasicMaterial({
+        map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.7,
+      });
+      const screen = new THREE.Mesh(screenGeo, screenMat);
+      screen.userData = { project, index: i };
+      group.add(screen);
+      screens.push(screen);
+
+      // Frame glow
+      const frameGeo = new THREE.PlaneGeometry(4.8, 2.8);
+      const frameMat = new THREE.MeshBasicMaterial({
+        color: 0x4D4DFF, transparent: true, opacity: 0.08,
+        blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+      });
+      const frame = new THREE.Mesh(frameGeo, frameMat);
+      frame.position.z = -0.02;
+      group.add(frame);
+      screen.userData.frame = frame;
+
+      // Screen light
+      const light = new THREE.PointLight(0x4D4DFF, 0.6, 8);
+      light.position.set(0, 0, 1.5);
+      group.add(light);
+
+      scene.add(group);
+      screenData.push({ screen, frame, group, baseY: screenPos.y, t, index: i });
+    });
+
+    // --- Particles ---
+    const particleCount = 700;
+    const particleGeo = new THREE.BufferGeometry();
+    const pPositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      pPositions[i * 3] = (Math.random() - 0.5) * 35;
+      pPositions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+      pPositions[i * 3 + 2] = -Math.random() * 75;
+    }
+    particleGeo.setAttribute("position", new THREE.BufferAttribute(pPositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x4D4DFF, size: 0.04, transparent: true, opacity: 0.5,
+      blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    });
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // --- Lights ---
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
+
+    // --- Raycaster ---
+    const raycaster = new THREE.Raycaster();
+    const mouseVec = new THREE.Vector2(-10, -10);
+    let isHovering = false;
+
+    const onMouseMove = (e) => {
+      mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+
+    const onClick = () => {
+      raycaster.setFromCamera(mouseVec, camera);
+      const intersects = raycaster.intersectObjects(screens);
+      if (intersects.length > 0) {
+        onScreenClick(intersects[0].object.userData.project);
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("click", onClick);
+
+    // --- Scroll ---
+    const onScroll = () => {
+      const container = document.getElementById("scroll-experience");
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const total = container.offsetHeight - window.innerHeight;
+      const scrolled = Math.max(0, -rect.top);
+      scrollProgress.current = Math.min(1, Math.max(0, scrolled / total));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // --- Resize ---
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener("resize", onResize);
+
+    // --- Animation ---
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let animId;
+
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      const time = Date.now() * 0.001;
+      const progress = scrollProgress.current;
+
+      // Camera follows curve
+      if (progress < 0.03) {
+        camera.position.set(0, 0, 2);
+        camera.lookAt(0, 0, -6);
+      } else {
+        const camT = Math.min(0.99, (progress - 0.03) * 1.03);
+        const camPos = curve.getPointAt(camT);
+        const lookT = Math.min(0.999, camT + 0.04);
+        const lookPos = curve.getPointAt(lookT);
+        camera.position.copy(camPos);
+        camera.lookAt(lookPos);
+      }
+
+      // Hero object — visible at start, fades as you scroll
+      const heroFade = Math.max(0, 1 - progress / 0.1);
+      heroGroup.visible = heroFade > 0.01;
+      if (heroGroup.visible) {
+        if (!reducedMotion) {
+          heroMesh.rotation.x += 0.003;
+          heroMesh.rotation.y += 0.004;
+          heroWire.rotation.x = heroMesh.rotation.x;
+          heroWire.rotation.y = heroMesh.rotation.y;
+          const scale = 1 + Math.sin(time * 0.5) * 0.03;
+          heroMesh.scale.setScalar(scale);
+          heroWire.scale.setScalar(scale);
+        }
+        heroMat.opacity = 0.85 * heroFade;
+        heroWire.material.opacity = 0.2 * heroFade;
+      }
+
+      // Screens — highlight when near, float gently
+      if (!reducedMotion) {
+        screenData.forEach(({ screen, frame, group, baseY, t, index }) => {
+          const dist = Math.abs(progress - t);
+          const proximity = Math.max(0, 1 - dist * 5);
+          screen.material.opacity = 0.5 + proximity * 0.5;
+          frame.material.opacity = 0.06 + proximity * 0.4;
+          screen.scale.setScalar(1 + proximity * 0.1);
+          group.position.y = baseY + Math.sin(time * 0.4 + index) * 0.08;
+        });
+
+        particles.rotation.y = time * 0.015;
+
+        vertebrae.forEach((ring, i) => {
+          ring.material.opacity = 0.15 + Math.sin(time + i * 0.4) * 0.12;
+        });
+      }
+
+      // Raycast for cursor change
+      raycaster.setFromCamera(mouseVec, camera);
+      const intersects = raycaster.intersectObjects(screens);
+      const hovering = intersects.length > 0;
+      if (hovering !== isHovering) {
+        isHovering = hovering;
+        canvas.style.cursor = hovering ? "pointer" : "default";
+      }
+
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // --- Cleanup ---
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      canvas.removeEventListener("click", onClick);
+      renderer.dispose();
+      tubeGeo.dispose();
+      tubeMat.dispose();
+      glowGeo.dispose();
+      glowMat.dispose();
+      heroGeo.dispose();
+      heroMat.dispose();
+      heroWire.geometry.dispose();
+      heroWire.material.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
+      screens.forEach(s => {
+        s.geometry.dispose();
+        if (s.material.map) s.material.map.dispose();
+        s.material.dispose();
+        if (s.userData.frame) {
+          s.userData.frame.geometry.dispose();
+          s.userData.frame.material.dispose();
+        }
+      });
+    };
+  }, [projects, onScreenClick]);
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-hidden="true" />
+      <div className="sr-only" aria-live="polite">
+        Immersive 3D scroll experience. A crystalline structure transforms into a glowing spine
+        through space. Project screens float along the path — click any screen to view the project video.
+      </div>
+    </>
+  );
+}
