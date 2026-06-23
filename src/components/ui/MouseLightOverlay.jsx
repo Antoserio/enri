@@ -4,6 +4,9 @@ export default function MouseLightOverlay() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    // Skip on touch devices — no cursor, saves battery
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -103,7 +106,7 @@ export default function MouseLightOverlay() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-30"
+      className="fixed inset-0 w-full h-full pointer-events-none z-30 hidden md:block"
       aria-hidden="true"
     />
   );

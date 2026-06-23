@@ -62,7 +62,7 @@ export default function Home() {
     <div className="relative" style={{ background: "#0A0A0B" }}>
       <NavBar />
 
-      <div id="scroll-experience" style={{ height: "700vh" }} className="relative">
+      <div id="scroll-experience" style={{ height: "min(700vh, 500vh + 200vw)" }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden">
           <ScrollSpineScene projects={PROJECTS} onScreenClick={setSelectedProject} />
           <ScrollOverlay projects={PROJECTS} />

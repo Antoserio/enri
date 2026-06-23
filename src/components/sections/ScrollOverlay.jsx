@@ -55,7 +55,7 @@ export default function ScrollOverlay({ projects }) {
             </p>
             <h1
               className="font-display font-bold text-quartz leading-none"
-              style={{ fontSize: "clamp(2rem, 7vw, 7.5rem)" }}
+              style={{ fontSize: "clamp(1.5rem, 9vw, 7.5rem)" }}
             >
               Espacio
               <br />
@@ -64,7 +64,7 @@ export default function ScrollOverlay({ projects }) {
               Vacío
             </h1>
             <p
-              className="mt-6 text-base md:text-lg text-quartz/40 font-body font-light max-w-xl"
+              className="mt-4 md:mt-6 text-sm md:text-lg text-quartz/40 font-body font-light max-w-xs md:max-w-xl px-4"
               style={{ lineHeight: 1.6 }}
             >
               Primer álbum · Live/AV · Techno industrial, ambient, voces corales y poesía.

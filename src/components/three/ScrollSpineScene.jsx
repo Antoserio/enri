@@ -9,14 +9,19 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const isMobile = window.innerWidth < 768;
+    const isPortrait = window.innerHeight > window.innerWidth;
+
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0A0A0B, 10, 50);
+    scene.fog = new THREE.Fog(0x0A0A0B, isMobile ? 8 : 10, isMobile ? 40 : 50);
 
-    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 200);
+    // Wider FOV on portrait/mobile so screens stay visible
+    const baseFov = isPortrait ? 90 : 65;
+    const camera = new THREE.PerspectiveCamera(baseFov, window.innerWidth / window.innerHeight, 0.1, 200);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x0A0A0B, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -92,7 +97,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const screenPos = point.clone().add(right.multiplyScalar(3.2 * side));
+      const sideOffset = isPortrait ? 2.2 : 3.2;
+      const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
       group.position.copy(screenPos);
@@ -101,7 +107,9 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenGeo = new THREE.PlaneGeometry(4.2, 2.3);
+      const screenW = isPortrait ? 3.4 : 4.2;
+      const screenH = isPortrait ? 2.6 : 2.3;
+      const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
       const screenMat = new THREE.MeshBasicMaterial({
@@ -113,7 +121,9 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameGeo = new THREE.PlaneGeometry(4.5, 2.6);
+      const frameW = isPortrait ? 3.6 : 4.5;
+      const frameH = isPortrait ? 2.8 : 2.6;
+      const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
         blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
@@ -172,8 +182,19 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       }
     };
 
+    const onTouchStart = (e) => {
+      if (e.touches[0]) {
+        mouseVec.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+        mouseVec.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+      }
+    };
+    const onTouchEnd = () => {
+      onClick();
+    };
     window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
     canvas.addEventListener("click", onClick);
+    canvas.addEventListener("touchend", onTouchEnd, { passive: true });
 
     // --- Scroll ---
     const onScroll = () => {
@@ -190,6 +211,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     // --- Resize ---
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
+      camera.fov = window.innerHeight > window.innerWidth ? 90 : 65;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
@@ -275,9 +297,11 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       canvas.removeEventListener("click", onClick);
+      canvas.removeEventListener("touchend", onTouchEnd);
       renderer.dispose();
       tubeGeo.dispose();
       tubeMat.dispose();
