@@ -140,24 +140,29 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const tempObj = new THREE.Object3D();
 
     projects.forEach((project, i) => {
-       // ESPIRAL: todos los proyectos distribuidos en la curva
-       const spiralT = (i / projects.length) * 0.95;
-       const point = curve.getPointAt(spiralT);
-       const tangent = curve.getTangentAt(spiralT).normalize();
-
+       // ESPIRAL: todos los proyectos en la espiral
+       const t = (i / projects.length) * 0.95;  // Distribuir a lo largo de la espiral
+       const point = curve.getPointAt(t);
+       const tangent = curve.getTangentAt(t).normalize();
+       
+       // Offset perpendicular a la espiral
        const up = new THREE.Vector3(0, 1, 0);
        const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
        const screenOffset = isMobile ? 1.5 : 2.5;
        const screenPos = point.clone().add(right.multiplyScalar(screenOffset));
-
+       
+       // Quaternion default mira hacia la espiral
        const tempGroup = new THREE.Group();
        tempGroup.position.copy(screenPos);
        tempGroup.lookAt(point);
        const defaultQuat = tempGroup.quaternion.clone();
 
-       const group = new THREE.Group();
-       group.position.copy(screenPos);
-       scene.add(group);
+      const group = new THREE.Group();
+      group.position.copy(screenPos);
+      if (!isMobile) {
+        group.lookAt(isMobile ? new THREE.Vector3(0, 0, screenPos.z - 1) : curve.getPointAt(0.12 + (i / projects.length) * 0.72));
+      }
+      scene.add(group);
 
       // Screen plane - mucho más grande en móvil para ser protagonista
       const screenW = isMobile ? 2.2 : (isPortrait ? 0.12 : 3.0);
@@ -191,7 +196,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       light.position.set(0, 0, 1.5);
       group.add(light);
 
-      screenData.push({ screen, frame, group, baseY: screenPos.y, t: spiralT, index: i, defaultQuat });
+      screenData.push({ screen, frame, group, baseY: screenPos.y, t, index: i, defaultQuat });
     });
 
     // --- Scroll remap (dwell zones at each screen) ---
