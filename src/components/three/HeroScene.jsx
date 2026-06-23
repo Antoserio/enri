@@ -22,7 +22,7 @@ export default function HeroScene({ containerRef }) {
     // Icosahedron geometry — crystalline feel
     const geometry = new THREE.IcosahedronGeometry(1.4, 1);
     const material = new THREE.MeshPhysicalMaterial({
-      color: 0x4D4DFF,
+      color: 0x1A56DB,
       metalness: 0.1,
       roughness: 0.05,
       transmission: 0.92,
@@ -39,7 +39,7 @@ export default function HeroScene({ containerRef }) {
 
     // Wireframe overlay
     const wireGeo = new THREE.IcosahedronGeometry(1.42, 1);
-    const wireMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, wireframe: true, transparent: true, opacity: 0.15 });
+    const wireMat = new THREE.MeshBasicMaterial({ color: 0x1A56DB, wireframe: true, transparent: true, opacity: 0.15 });
     const wireMesh = new THREE.Mesh(wireGeo, wireMat);
     scene.add(wireMesh);
 
@@ -53,7 +53,7 @@ export default function HeroScene({ containerRef }) {
       positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
     }
     particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0x4D4DFF, size: 0.015, transparent: true, opacity: 0.5 });
+    const particleMat = new THREE.PointsMaterial({ color: 0x1A56DB, size: 0.015, transparent: true, opacity: 0.5 });
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
@@ -63,7 +63,7 @@ export default function HeroScene({ containerRef }) {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
     directionalLight.position.set(5, 5, 5);
     scene.add(directionalLight);
-    const pointLight = new THREE.PointLight(0x4D4DFF, 2, 10);
+    const pointLight = new THREE.PointLight(0x1A56DB, 2, 10);
     pointLight.position.set(-3, 2, 3);
     scene.add(pointLight);
     const pointLight2 = new THREE.PointLight(0xFF3D00, 0.8, 10);

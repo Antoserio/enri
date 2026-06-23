@@ -10,7 +10,7 @@
     --card-foreground: 240 5% 96%;
     --popover: 240 6% 6%;
     --popover-foreground: 240 5% 96%;
-    --primary: 240 100% 65%;
+    --primary: 221 79% 48%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 6% 12%;
     --secondary-foreground: 240 5% 96%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 6% 14%;
     --input: 240 6% 14%;
-    --ring: 240 100% 65%;
+    --ring: 221 79% 48%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -55,12 +55,12 @@
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #4D4DFF30; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #4D4DFF60; }
+::-webkit-scrollbar-thumb { background: #1A56DB30; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #1A56DB60; }
 
 html { scroll-behavior: smooth; }
 
-::selection { background: #4D4DFF30; color: #F2F2F7; }
+::selection { background: #1A56DB30; color: #F2F2F7; }
 
 .glass-panel {
   background: rgba(10, 10, 11, 0.72);

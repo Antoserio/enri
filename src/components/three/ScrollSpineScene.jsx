@@ -88,12 +88,12 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
 
     // Tubo de la espiral
     const tubeGeo = new THREE.TubeGeometry(curve, 80, 0.08, 8, false);
-    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.5 });
+    const tubeMat = new THREE.MeshBasicMaterial({ color: 0x1A56DB, transparent: true, opacity: 0.5 });
     scene.add(new THREE.Mesh(tubeGeo, tubeMat));
 
     // Brillo de la espiral
     const glowGeo = new THREE.TubeGeometry(curve, 80, 0.15, 8, false);
-    const glowMat = new THREE.MeshBasicMaterial({ color: 0x4D4DFF, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0x1A56DB, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
     scene.add(new THREE.Mesh(glowGeo, glowMat));
 
     // Vértebras
@@ -104,7 +104,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const tangent = curve.getTangentAt(t);
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry(0.25, 0.02, 6, 16),
-        new THREE.MeshBasicMaterial({ color: 0x6C6CFF, transparent: true, opacity: 0.2 })
+        new THREE.MeshBasicMaterial({ color: 0x4477EE, transparent: true, opacity: 0.2 })
       );
       ring.position.copy(point);
       ring.lookAt(point.clone().add(tangent));
@@ -118,7 +118,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
 
     const heroGeo = new THREE.IcosahedronGeometry(1.6, 1);
     const heroMat = new THREE.MeshPhysicalMaterial({
-      color: 0x4D4DFF, metalness: 0.2, roughness: 0.1,
+      color: 0x1A56DB, metalness: 0.2, roughness: 0.1,
       transmission: 0.8, thickness: 1.5, ior: 2.0, clearcoat: 1,
       clearcoatRoughness: 0.15, transparent: true, opacity: 0.9,
     });
@@ -127,7 +127,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
 
     const heroWire = new THREE.Mesh(
       new THREE.IcosahedronGeometry(1.62, 1),
-      new THREE.MeshBasicMaterial({ color: 0x6C6CFF, wireframe: true, transparent: true, opacity: 0.25 })
+      new THREE.MeshBasicMaterial({ color: 0x4477EE, wireframe: true, transparent: true, opacity: 0.25 })
     );
     heroGroup.add(heroWire);
     scene.add(heroGroup);
@@ -181,7 +181,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const frameH = isPortrait ? 0.26 : 1.95;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
-        color: 0x4D4DFF, transparent: true, opacity: 0.05,
+        color: 0x1A56DB, transparent: true, opacity: 0.05,
         blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
       });
       const frame = new THREE.Mesh(frameGeo, frameMat);
@@ -190,7 +190,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screen.userData.frame = frame;
 
       // Screen light
-      const light = new THREE.PointLight(0x4D4DFF, 0.5, 8);
+      const light = new THREE.PointLight(0x1A56DB, 0.5, 8);
       light.position.set(0, 0, 1.5);
       group.add(light);
 
@@ -211,7 +211,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     }
     particleGeo.setAttribute("position", new THREE.BufferAttribute(pPositions, 3));
     const particleMat = new THREE.PointsMaterial({
-      color: 0x6C6CFF, size: 0.03, transparent: true, opacity: 0.4,
+      color: 0x4477EE, size: 0.03, transparent: true, opacity: 0.4,
       blending: THREE.AdditiveBlending, sizeAttenuation: true,
     });
     const particles = new THREE.Points(particleGeo, particleMat);

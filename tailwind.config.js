@@ -22,7 +22,7 @@ module.exports = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        cobalt: '#4D4DFF',
+        cobalt: '#1A56DB',
         obsidian: '#0A0A0B',
         quartz: '#F2F2F7',
         signal: '#FF3D00',
@@ -48,8 +48,8 @@ module.exports = {
         'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
         'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(77, 77, 255, 0.3)' },
-          '50%': { boxShadow: '0 0 40px rgba(77, 77, 255, 0.6)' }
+          '0%, 100%': { boxShadow: '0 0 20px rgba(26, 86, 219, 0.3)' },
+          '50%': { boxShadow: '0 0 40px rgba(26, 86, 219, 0.6)' }
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0px)' },

@@ -108,7 +108,7 @@ export default function Home() {
           >
             {t.hero.title1}
             <br />
-            <span className="text-[#4D4DFF]">{t.hero.title2}</span>
+            <span className="text-[#1A56DB]">{t.hero.title2}</span>
             <br />
             {t.hero.title3}
           </h1>
@@ -125,7 +125,7 @@ export default function Home() {
               transition={{ duration: 0.35 }}
               className="absolute bottom-8 md:bottom-10 left-0 right-0 flex flex-col items-center pointer-events-none z-10"
             >
-              <p className="text-[10px] md:text-xs tracking-widest uppercase text-[#4D4DFF] font-body">
+              <p className="text-[10px] md:text-xs tracking-widest uppercase text-[#1A56DB] font-body">
                 {activeProject.category}
               </p>
               <h2

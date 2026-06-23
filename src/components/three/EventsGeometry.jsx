@@ -22,7 +22,7 @@ export default function EventsGeometry({ sectionId = "eventos" }) {
     // Crear octahedro con estilo similar
     const geometry = new THREE.OctahedronGeometry(1.2, 2);
     const material = new THREE.MeshPhysicalMaterial({
-      color: 0x6C6CFF,
+      color: 0x4477EE,
       metalness: 0.3,
       roughness: 0.1,
       transmission: 0.7,
@@ -50,7 +50,7 @@ export default function EventsGeometry({ sectionId = "eventos" }) {
 
     // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-    const dirLight = new THREE.DirectionalLight(0x4D4DFF, 0.6);
+    const dirLight = new THREE.DirectionalLight(0x1A56DB, 0.6);
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
@@ -67,7 +67,7 @@ export default function EventsGeometry({ sectionId = "eventos" }) {
     
     particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const particleMaterial = new THREE.PointsMaterial({
-      color: 0x4D4DFF,
+      color: 0x1A56DB,
       size: 0.05,
       transparent: true,
       opacity: 0.3,
