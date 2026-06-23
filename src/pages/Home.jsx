@@ -59,7 +59,7 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ background: "#0A0A0B" }}>
+    <div className="relative" style={{ background: "#0A0A0B" }}>
       <NavBar />
 
       <div id="scroll-experience" style={{ height: "min(700vh, 500vh + 200vw)" }} className="relative">
