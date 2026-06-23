@@ -32,12 +32,20 @@ export default function AboutSection() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="md:col-span-9"
           >
-            <h2
-              className="font-display font-bold text-quartz leading-tight mb-10"
-              style={{ fontSize: "clamp(1.75rem, 3.5vw, 3.5rem)" }}
-            >
-              Espacio Premeditadamente Vacío
-            </h2>
+            <div className="flex flex-col md:flex-row md:items-start gap-8 mb-10">
+              <img
+                src="https://f4.bcbits.com/img/a2297333929_10.jpg"
+                alt="Espacio Premeditadamente Vacío — portada"
+                className="w-40 md:w-52 aspect-square object-cover rounded-sm shrink-0"
+                style={{ boxShadow: "0 0 40px rgba(77,77,255,0.15)" }}
+              />
+              <h2
+                className="font-display font-bold text-quartz leading-tight self-end"
+                style={{ fontSize: "clamp(1.75rem, 3.5vw, 3.5rem)" }}
+              >
+                Espacio Premeditadamente Vacío
+              </h2>
+            </div>
 
             <div className="space-y-6 text-quartz/40 font-body font-light text-base md:text-lg max-w-3xl" style={{ lineHeight: 1.7 }}>
               <p>{t.about.p1}</p>
