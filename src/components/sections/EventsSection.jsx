@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import EventsGeometry from "@/components/three/EventsGeometry";
 
 export default function EventsSection() {
   const [events, setEvents] = useState([]);
@@ -72,6 +73,7 @@ export default function EventsSection() {
 
   return (
     <section id="eventos" className="relative min-h-screen py-24 px-6 md:px-12 bg-gradient-to-b from-obsidian via-obsidian/95 to-obsidian overflow-hidden">
+      <EventsGeometry />
       <div className="max-w-6xl mx-auto relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

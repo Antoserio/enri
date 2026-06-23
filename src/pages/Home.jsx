@@ -74,7 +74,6 @@ export default function Home() {
       <MouseLightOverlay />
 
       <AboutSection />
-      <EventsGeometry />
       <EventsSection />
       <FooterSection />
       <ContactSignal />
