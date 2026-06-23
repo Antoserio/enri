@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MousePointerClick, ChevronDown } from "lucide-react";
+import { buildScrollRemap, remapProgress } from "@/lib/scrollRemap";
 
 export default function ScrollOverlay({ projects }) {
   const [progress, setProgress] = useState(0);
+  const { stops, screenTs } = useMemo(
+    () => buildScrollRemap(projects.length),
+    [projects.length]
+  );
 
   useEffect(() => {
     const onScroll = () => {
@@ -19,17 +24,18 @@ export default function ScrollOverlay({ projects }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const showHero = progress < 0.05;
-  const showEnd = progress > 0.97;
+  const camT = remapProgress(progress, stops);
+  const showHero = camT < 0.02;
+  const showEnd = camT > 0.96;
 
   let activeProject = null;
   let activeOpacity = 0;
   if (!showHero && !showEnd) {
     projects.forEach((p, i) => {
-      const screenT = 0.12 + (i / projects.length) * 0.72;
-      const dist = Math.abs(progress - screenT);
-      if (dist < 0.06) {
-        const opacity = 1 - dist / 0.06;
+      const screenT = screenTs[i];
+      const dist = Math.abs(camT - screenT);
+      if (dist < 0.04) {
+        const opacity = 1 - dist / 0.04;
         if (opacity > activeOpacity) {
           activeOpacity = opacity;
           activeProject = p;
@@ -55,7 +61,7 @@ export default function ScrollOverlay({ projects }) {
             </p>
             <h1
               className="font-display font-bold text-quartz leading-none"
-              style={{ fontSize: "clamp(1.5rem, 9vw, 7.5rem)" }}
+              style={{ fontSize: "clamp(1.5rem, 8vw, 5rem)" }}
             >
               Espacio
               <br />

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
+import { buildScrollRemap, remapProgress } from "@/lib/scrollRemap";
 
 export default function ScrollSpineScene({ projects, onScreenClick }) {
   const canvasRef = useRef(null);
@@ -141,6 +142,9 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screenData.push({ screen, frame, group, baseY: screenPos.y, t, index: i, defaultQuat });
     });
 
+    // --- Scroll remap (dwell zones at each screen) ---
+    const { stops } = buildScrollRemap(projects.length);
+
     // --- Particles ---
     const particleCount = 500;
     const particleGeo = new THREE.BufferGeometry();
@@ -182,14 +186,25 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       }
     };
 
+    let touchStart = null;
     const onTouchStart = (e) => {
       if (e.touches[0]) {
+        touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         mouseVec.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
         mouseVec.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
       }
     };
-    const onTouchEnd = () => {
-      onClick();
+    const onTouchEnd = (e) => {
+      if (!touchStart) return;
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+      const dx = touch.clientX - touchStart.x;
+      const dy = touch.clientY - touchStart.y;
+      touchStart = null;
+      // Only treat as tap (not scroll) if minimal movement
+      if (Math.sqrt(dx * dx + dy * dy) < 10) {
+        onClick();
+      }
     };
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -226,15 +241,32 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const time = Date.now() * 0.001;
       const progress = scrollProgress.current;
 
-      // Camera follows curve
-      if (progress < 0.03) {
+      // Camera follows curve with remapped progress (dwells at each screen)
+      const camT = progress < 0.02 ? 0 : remapProgress(progress, stops);
+
+      if (progress < 0.02) {
         camera.position.set(0, 0, 2);
         camera.lookAt(0, 0, -6);
       } else {
-        const camT = Math.min(0.99, (progress - 0.03) * 1.03);
         const camPos = curve.getPointAt(camT);
         const lookT = Math.min(0.999, camT + 0.04);
-        const lookPos = curve.getPointAt(lookT);
+        let lookPos = curve.getPointAt(lookT);
+
+        // Blend lookAt toward nearest screen to center it in view
+        let maxProx = 0;
+        let nearestScreenPos = null;
+        screenData.forEach(({ group, t }) => {
+          const d = Math.abs(camT - t);
+          const prox = Math.max(0, 1 - d * 5);
+          if (prox > maxProx) {
+            maxProx = prox;
+            nearestScreenPos = group.position;
+          }
+        });
+        if (nearestScreenPos && maxProx > 0.1) {
+          lookPos = lookPos.clone().lerp(nearestScreenPos, maxProx * 0.85);
+        }
+
         camera.position.copy(camPos);
         camera.lookAt(lookPos);
       }
@@ -259,8 +291,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       // Screens — face camera when near center
       if (!reducedMotion) {
         screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
-          const dist = Math.abs(progress - t);
-          const proximity = Math.max(0, 1 - dist * 6);
+          const dist = Math.abs(camT - t);
+          const proximity = Math.max(0, 1 - dist * 5);
 
           // Orient: lerp between angled (default) and camera-facing
           tempObj.position.copy(group.position);
