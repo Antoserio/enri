@@ -143,24 +143,42 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const tempObj = new THREE.Object3D();
 
     projects.forEach((project, i) => {
-      const t = 0.12 + (i / projects.length) * 0.72;
-      const point = curve.getPointAt(t);
-      const tangent = curve.getTangentAt(t).normalize();
-      const up = new THREE.Vector3(0, 1, 0);
-      const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
-      const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 0.8 : 3.2;
-      const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
+      // En móvil: posicionamiento vertical centrado simple
+      // En desktop: curve complex con offset lateral
+      let screenPos, defaultQuat;
+      
+      if (isMobile) {
+        // Vertical centrado en el eje Z, distribuido a lo largo del scroll
+        const zPos = -8 - (i / projects.length) * 50;
+        screenPos = new THREE.Vector3(0, 0, zPos);
+        defaultQuat = new THREE.Quaternion();
+      } else {
+        // Desktop: original curve logic
+        const t = 0.12 + (i / projects.length) * 0.72;
+        const point = curve.getPointAt(t);
+        const tangent = curve.getTangentAt(t).normalize();
+        const up = new THREE.Vector3(0, 1, 0);
+        const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+        const side = i % 2 === 0 ? 1 : -1;
+        const sideOffset = isPortrait ? 0.8 : 3.2;
+        screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
+        
+        const tempGroup = new THREE.Group();
+        tempGroup.position.copy(screenPos);
+        tempGroup.lookAt(point);
+        defaultQuat = tempGroup.quaternion.clone();
+      }
 
       const group = new THREE.Group();
       group.position.copy(screenPos);
-      group.lookAt(point);
-      const defaultQuat = group.quaternion.clone();
+      if (!isMobile) {
+        group.lookAt(isMobile ? new THREE.Vector3(0, 0, screenPos.z - 1) : curve.getPointAt(0.12 + (i / projects.length) * 0.72));
+      }
       scene.add(group);
 
-      // Screen plane
-      const screenW = isPortrait ? 0.12 : 3.0;
-      const screenH = isPortrait ? 0.18 : 1.7;
+      // Screen plane - más grande en móvil
+      const screenW = isMobile ? 1.2 : (isPortrait ? 0.12 : 3.0);
+      const screenH = isMobile ? 1.8 : (isPortrait ? 0.18 : 1.7);
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -190,6 +208,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       light.position.set(0, 0, 1.5);
       group.add(light);
 
+      const t = isMobile ? (i / projects.length) : (0.12 + (i / projects.length) * 0.72);
       screenData.push({ screen, frame, group, baseY: screenPos.y, t, index: i, defaultQuat });
     });
 
@@ -295,35 +314,44 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       // Camera follows curve with remapped progress (dwells at each screen)
       const camT = progress < 0.02 ? 0 : remapProgress(progress, stops);
 
-      if (progress < 0.02) {
-        camera.position.set(0, 0, 2);
-        camera.lookAt(0, 0, -6);
+      if (isMobile) {
+        // En móvil: cámara simple que sigue linealmente el scroll
+        camera.position.set(0, 0, 3);
+        const targetZ = -8 - (progress * 50);
+        camera.position.z = 3;
+        camera.lookAt(0, 0, targetZ);
       } else {
-        const camPos = curve.getPointAt(camT);
-        const lookT = Math.min(0.999, camT + 0.04);
-        let lookPos = curve.getPointAt(lookT);
-
-        // Blend lookAt toward nearest screen to center it in view
-        let maxProx = 0;
-        let nearestScreenPos = null;
-        screenData.forEach(({ group, t }) => {
-          const d = Math.abs(camT - t);
-          const prox = Math.max(0, 1 - d * 5);
-          if (prox > maxProx) {
-            maxProx = prox;
-            nearestScreenPos = group.position;
-          }
-        });
-        if (nearestScreenPos && maxProx > 0.1) {
-          const blend = maxProx * maxProx * 0.9;
-          lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
-          const posBlend = maxProx * maxProx * 0.35;
-          const adjustedCamPos = camPos.clone().lerp(nearestScreenPos, posBlend);
-          camera.position.copy(adjustedCamPos);
+        // Desktop: original complex curve logic
+        if (progress < 0.02) {
+          camera.position.set(0, 0, 2);
+          camera.lookAt(0, 0, -6);
         } else {
-          camera.position.copy(camPos);
+          const camPos = curve.getPointAt(camT);
+          const lookT = Math.min(0.999, camT + 0.04);
+          let lookPos = curve.getPointAt(lookT);
+
+          // Blend lookAt toward nearest screen to center it in view
+          let maxProx = 0;
+          let nearestScreenPos = null;
+          screenData.forEach(({ group, t }) => {
+            const d = Math.abs(camT - t);
+            const prox = Math.max(0, 1 - d * 5);
+            if (prox > maxProx) {
+              maxProx = prox;
+              nearestScreenPos = group.position;
+            }
+          });
+          if (nearestScreenPos && maxProx > 0.1) {
+            const blend = maxProx * maxProx * 0.9;
+            lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
+            const posBlend = maxProx * maxProx * 0.35;
+            const adjustedCamPos = camPos.clone().lerp(nearestScreenPos, posBlend);
+            camera.position.copy(adjustedCamPos);
+          } else {
+            camera.position.copy(camPos);
+          }
+          camera.lookAt(lookPos);
         }
-        camera.lookAt(lookPos);
       }
 
       // Hero object
@@ -346,20 +374,28 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       // Screens — face camera when near center
       if (!reducedMotion) {
         screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
-          const dist = Math.abs(camT - t);
-          const proximity = Math.max(0, 1 - dist * 5);
+          if (isMobile) {
+            // En móvil: las tarjetas siempre frontal, escala basada en distancia al scroll
+            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 3);
+            screen.material.opacity = 0.4 + proximity * 0.6;
+            frame.material.opacity = 0.08 + proximity * 0.25;
+            screen.scale.setScalar(0.95 + proximity * 0.1);
+          } else {
+            // Desktop: original logic
+            const dist = Math.abs(camT - t);
+            const proximity = Math.max(0, 1 - dist * 5);
 
-          // Orient: lerp between angled (default) and camera-facing
-          tempObj.position.copy(group.position);
-          tempObj.lookAt(camera.position);
-          const cameraQuat = tempObj.quaternion.clone();
-          const limitedProximity = Math.min(proximity, 0.35);
-          group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, limitedProximity);
+            tempObj.position.copy(group.position);
+            tempObj.lookAt(camera.position);
+            const cameraQuat = tempObj.quaternion.clone();
+            const limitedProximity = Math.min(proximity, 0.35);
+            group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, limitedProximity);
 
-          screen.material.opacity = 0.3 + proximity * 0.7;
-          frame.material.opacity = 0.04 + proximity * 0.35;
-          screen.scale.setScalar(1 + proximity * 0.12);
-          group.position.y = baseY + Math.sin(time * 0.4 + index) * 0.06;
+            screen.material.opacity = 0.3 + proximity * 0.7;
+            frame.material.opacity = 0.04 + proximity * 0.35;
+            screen.scale.setScalar(1 + proximity * 0.12);
+            group.position.y = baseY + Math.sin(time * 0.4 + index) * 0.06;
+          }
         });
 
         particles.rotation.y = time * 0.01;

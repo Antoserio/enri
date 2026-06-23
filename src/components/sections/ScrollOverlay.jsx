@@ -138,20 +138,22 @@ export default function ScrollOverlay({ projects }) {
         <motion.div
           key={activeProject.id}
           style={{ opacity: activeOpacity }}
-          className={`absolute bottom-16 md:bottom-24 ${activeProjectIndex % 2 === 0 ? 'left-12 md:left-24 text-left' : 'right-12 md:right-24 text-right'}`}
+          className={`absolute inset-0 flex items-center justify-center px-6 md:px-0 md:${activeProjectIndex % 2 === 0 ? 'left-24' : 'right-24'}`}
         >
-          <p className="text-[10px] md:text-xs tracking-widest uppercase text-cobalt mb-2 font-body">
-            {activeProject.category}
-          </p>
-          <h2
-            className="font-display font-bold text-quartz"
-            style={{ fontSize: "clamp(1.25rem, 3.5vw, 2.5rem)" }}
-          >
-            {activeProject.title}
-          </h2>
-          <div className="mt-3 flex items-center gap-2 text-xs md:text-sm text-quartz/30 font-body">
-            <MousePointerClick className="w-4 h-4" />
-            <span>{t.hero.click}</span>
+          <div className="max-w-md text-center md:text-left">
+            <p className="text-xs md:text-sm tracking-widest uppercase text-cobalt mb-3 md:mb-2 font-body">
+              {activeProject.category}
+            </p>
+            <h2
+              className="font-display font-bold text-quartz leading-tight mb-4"
+              style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)" }}
+            >
+              {activeProject.title}
+            </h2>
+            <div className="mt-4 md:mt-3 flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm text-quartz/40 font-body">
+              <MousePointerClick className="w-4 h-4" />
+              <span>{t.hero.click}</span>
+            </div>
           </div>
         </motion.div>
       )}
