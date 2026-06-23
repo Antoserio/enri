@@ -2,13 +2,13 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
-const R        = 3.2;    // helix radius
-const PITCH    = 1.05;   // vertical gap — breathing room between cards
+const R        = 3.6;    // helix radius (wider = more gap between cards)
+const PITCH    = 0.92;   // vertical step — less drop so lower cards sit closer
 const CARD_W   = 2.4;    // card width  (3D units)
 const CARD_H   = 1.35;   // card height (≈ 16:9)
 const SEGS_W   = 24;     // horizontal subdivisions (for bending)
 const SEGS_H   = 14;     // vertical subdivisions
-const MAX_BEND = 0.52;   // max centre-bulge depth (inward)
+const MAX_BEND = 0.34;   // reduced bend → corners don't protrude into neighbours
 const REPEAT   = 2;      // 2× projects → 10 cards total, good density with breathing room
 const BLUE     = 0x1A56DB;
 const TWO_PI   = Math.PI * 2;
@@ -128,8 +128,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     let pointerDown  = null;
     let lastFront    = -1;
 
-    // Scroll / wheel — negative = advance right+down
-    const onWheel = (e) => { targetAngle -= e.deltaY * 0.003; };
+    // Wheel on the canvas only — preventDefault stops page from also scrolling
+    const onWheel = (e) => { e.preventDefault(); targetAngle -= e.deltaY * 0.003; };
 
     // Touch
     let touchY0 = 0, touchA0 = 0;
@@ -164,7 +164,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       }
     };
 
-    window.addEventListener("wheel",       onWheel,       { passive: true });
+    mount.addEventListener("wheel",        onWheel,       { passive: false }); // passive:false allows preventDefault
     mount.addEventListener("touchstart",   onTouchStart,  { passive: true });
     mount.addEventListener("touchmove",    onTouchMove,   { passive: true });
     mount.addEventListener("pointerdown",  onPointerDown);
@@ -236,7 +236,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
 
         // Opacity by frontness — hide back-facing cards completely to prevent y-wrap flash
         const frontness = (Math.cos(normAngle) + 1) / 2;
-        mesh.visible = frontness > 0.06;
+        mesh.visible = frontness > 0.18; // hide back 36% — prevents y-wrap flash
         mesh.material.opacity = 0.1 + 0.9 * frontness;
 
         // Track which card is at front
@@ -276,7 +276,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("wheel",   onWheel);
+      mount.removeEventListener("wheel",    onWheel);
       window.removeEventListener("resize",  onResize);
       mount.removeEventListener("touchstart",  onTouchStart);
       mount.removeEventListener("touchmove",   onTouchMove);
