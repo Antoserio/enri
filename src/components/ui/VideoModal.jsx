@@ -51,14 +51,14 @@ export default function VideoModal({ project, onClose }) {
               loop
               muted
               playsInline
-              className="w-full rounded-2xl shadow-2xl"
+              className="w-full max-h-[60vh] object-contain rounded-2xl shadow-2xl"
             />
           ) : (
-            <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl">
+            <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl max-h-[60vh]">
               <motion.img
                 src={project.image}
                 alt={project.title}
-                className="w-full"
+                className="w-full max-h-[60vh] object-contain"
                 initial={{ scale: 1.05 }}
                 animate={{ scale: 1.15 }}
                 transition={{ duration: 12, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
