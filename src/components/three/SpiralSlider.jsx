@@ -24,9 +24,9 @@ function SpiralSliderDesktop({ projects, onProjectClick, onActiveProject }) {
 
   const radius = Math.min(vw * 0.40, 290);
   const persp  = radius * 3;
-  const cardW  = Math.min(vw * 0.25, 180);
-  const cardH  = cardW * 1.45;
-  const yStep  = 34;
+  const cardW  = Math.min(vw * 0.28, 210);
+  const cardH  = cardW * 0.5625; // 16:9 landscape
+  const yStep  = 20;
   const N      = projects.length;
 
   // Three.js sphere (transparent canvas behind CSS cards)
@@ -199,7 +199,7 @@ function SpiralSliderMobile({ projects, onProjectClick, onActiveProject }) {
     camera.position.set(0, 0, 7);
 
     const N = projects.length;
-    const R = 2.0, cardW = 1.0, cardH = 1.5, yStep = 0.22;
+    const R = 2.2, cardW = 1.6, cardH = 0.9, yStep = 0.15; // landscape 16:9
 
     // Sphere
     const sphGeo = new THREE.IcosahedronGeometry(1.2, 1);

@@ -19,7 +19,7 @@ const PROJECTS = [
     category: "LP · Live/AV · 2026",
     description: "Primer álbum en solitario. Un proyecto dual integrado por un Live/AV y un LP publicado en marzo de 2026 en digital y en vinilo con el sello Pinorama Records. La arquitectura sonora transiciona desde beats de techno industrial hasta armonías luminosas y texturas ambientales.",
     year: "2026",
-    image: "/Foto Enri La Forêt 1.jpg",
+    image: "/enri-1.jpg",
   },
   {
     id: "esta-linea",
@@ -27,7 +27,7 @@ const PROJECTS = [
     category: "Performance · Archivo · 2023",
     description: "Performance y archivo creado con Helena Mariño. Toma su nombre de un fragmento de Permanente obra negra de Vivian Abenshushan. La cocina como espacio discursivo y de resistencia femenina durante el franquismo.",
     year: "2023",
-    image: "/Foto Enri La Forêt 3 (Live).jpg",
+    image: "/enri-live.jpg",
     link: "https://estalinea.es/",
   },
   {
@@ -36,7 +36,7 @@ const PROJECTS = [
     category: "Performance sonora · 2022",
     description: "Grabación sonora de la performance basada en el poemario Los Bañistas (Ed. RIL, 2022) de Helena Mariño, realizada en el Espacio Cruce Contemporáneo de Madrid. Texto y voz: Helena Mariño. Música: Enri La Forêt.",
     year: "2022",
-    image: "/Poesía o barbarie (Teatro del Barrio) 1.jpg",
+    image: "/poesia-1.jpg",
   },
   {
     id: "capsulas-caixaforum",
@@ -44,7 +44,7 @@ const PROJECTS = [
     category: "Encargo · 2024",
     description: "Cápsulas sonoras creadas para el ciclo \"A la hora del té con Alicia\" de CaixaForum. Textos de Lewis Carroll. Música e interpretación: Enri La Forêt. Voz: Helena Mariño.",
     year: "2024",
-    image: "/Poesía o Barbarie (Teatro del Barrio) 2.jpg",
+    image: "/poesia-2.jpg",
   },
   {
     id: "citas-sonoras-2025",
@@ -52,7 +52,7 @@ const PROJECTS = [
     category: "Encargo · 2024–2025",
     description: "Citas sonoras compuestas para el Book Friday de Madrid (2024 y 2025), organizado por la Asociación Cuesta de Moyano. Música: Enri La Forêt. Voz: Helena Mariño.",
     year: "2025",
-    image: "/Poesía o Barbarie (Teatro del Barrio) 3.jpg",
+    image: "/poesia-3.jpg",
   },
 ];
 
