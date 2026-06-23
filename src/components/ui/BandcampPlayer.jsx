@@ -60,10 +60,10 @@ export default function BandcampPlayer() {
 
             {/* Bandcamp iframe — full album with tracklist */}
             <iframe
-              src="https://bandcamp.com/EmbeddedPlayer/album=2297333929/size=large/bgcol=0A0A0B/linkcol=4D4DFF/artwork=small/transparent=true/"
+              src="https://bandcamp.com/EmbeddedPlayer/album=2297333929/size=large/bgcol=0a0a0b/linkcol=4d4dff/transparent=true/"
               seamless
               className="w-full"
-              style={{ border: 0, height: showInfo ? 300 : 420 }}
+              style={{ border: 0, height: showInfo ? 300 : 470 }}
               title="Espacio Premeditadamente Vacío — Enri La Forêt"
             />
 
