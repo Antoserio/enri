@@ -143,31 +143,34 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const tempObj = new THREE.Object3D();
 
     projects.forEach((project, i) => {
-      // En móvil: posicionamiento vertical centrado simple
-      // En desktop: curve complex con offset lateral
-      let screenPos, defaultQuat;
-      
-      if (isMobile) {
-        // Vertical centrado en el eje Z, distribuido a lo largo del scroll
-        const zPos = -8 - (i / projects.length) * 50;
-        screenPos = new THREE.Vector3(0, 0, zPos);
-        defaultQuat = new THREE.Quaternion();
-      } else {
-        // Desktop: original curve logic
-        const t = 0.12 + (i / projects.length) * 0.72;
-        const point = curve.getPointAt(t);
-        const tangent = curve.getTangentAt(t).normalize();
-        const up = new THREE.Vector3(0, 1, 0);
-        const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
-        const side = i % 2 === 0 ? 1 : -1;
-        const sideOffset = isPortrait ? 0.8 : 3.2;
-        screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
-        
-        const tempGroup = new THREE.Group();
-        tempGroup.position.copy(screenPos);
-        tempGroup.lookAt(point);
-        defaultQuat = tempGroup.quaternion.clone();
-      }
+       // En móvil: ESPIRAL 3D / En desktop: curve complex
+       let screenPos, defaultQuat;
+
+       if (isMobile) {
+         // ESPIRAL: las imágenes rotan en círculo alrededor del eje Z
+         const angle = (i / projects.length) * Math.PI * 2;  // Vuelta completa
+         const spiralRadius = 4;
+         const xPos = Math.cos(angle) * spiralRadius;
+         const yPos = Math.sin(angle) * spiralRadius;
+         const zPos = -8 - (i / projects.length) * 50;
+         screenPos = new THREE.Vector3(xPos, yPos, zPos);
+         defaultQuat = new THREE.Quaternion();
+       } else {
+         // Desktop: original curve logic
+         const t = 0.12 + (i / projects.length) * 0.72;
+         const point = curve.getPointAt(t);
+         const tangent = curve.getTangentAt(t).normalize();
+         const up = new THREE.Vector3(0, 1, 0);
+         const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+         const side = i % 2 === 0 ? 1 : -1;
+         const sideOffset = isPortrait ? 0.8 : 3.2;
+         screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
+
+         const tempGroup = new THREE.Group();
+         tempGroup.position.copy(screenPos);
+         tempGroup.lookAt(point);
+         defaultQuat = tempGroup.quaternion.clone();
+       }
 
       const group = new THREE.Group();
       group.position.copy(screenPos);
@@ -315,11 +318,14 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const camT = progress < 0.02 ? 0 : remapProgress(progress, stops);
 
       if (isMobile) {
-        // En móvil: cámara simple que sigue linealmente el scroll
-        camera.position.set(0, 0, 3);
-        const targetZ = -8 - (progress * 50);
-        camera.position.z = 3;
-        camera.lookAt(0, 0, targetZ);
+        // En móvil: cámara gira alrededor de la espiral, mirando hacia el centro
+        const spiralRadius = 4.5;
+        const cameraAngle = progress * Math.PI * 4;  // Gira conforme scrolleas
+        const camX = Math.cos(cameraAngle) * spiralRadius;
+        const camY = Math.sin(cameraAngle) * spiralRadius * 0.5;
+        const camZ = 3 - (progress * 50);
+        camera.position.set(camX, camY, camZ);
+        camera.lookAt(0, 0, camZ - 2);
       } else {
         // Desktop: original complex curve logic
         if (progress < 0.02) {
@@ -376,11 +382,18 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       if (!reducedMotion) {
         screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
           if (isMobile) {
-            // En móvil: las imágenes son el protagonista, escala dramática
+            // En móvil: espiral + orientación dinámica hacia cámara
             const proximity = Math.max(0, 1 - Math.abs(progress - t) * 2.5);
+
+            // Orienta cada pantalla hacia la cámara para máxima visibilidad
+            tempObj.position.copy(group.position);
+            tempObj.lookAt(camera.position);
+            const cameraQuat = tempObj.quaternion.clone();
+            group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, 0.8);
+
             screen.material.opacity = 0.5 + proximity * 0.5;
             frame.material.opacity = 0.1 + proximity * 0.3;
-            screen.scale.setScalar(0.85 + proximity * 0.4);  // Escala más dramática: de 0.85 a 1.25
+            screen.scale.setScalar(0.85 + proximity * 0.4);
           } else {
             // Desktop: original logic
             const dist = Math.abs(camT - t);
