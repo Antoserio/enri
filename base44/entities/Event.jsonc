@@ -1,0 +1,35 @@
+{
+  "name": "Event",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "time": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "concert",
+        "installation",
+        "exhibition",
+        "workshop"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "date"
+  ]
+}

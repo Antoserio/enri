@@ -6,6 +6,8 @@ import MouseLightOverlay from "@/components/ui/MouseLightOverlay";
 import VideoModal from "@/components/ui/VideoModal";
 import BandcampPlayer from "@/components/ui/BandcampPlayer";
 import AboutSection from "@/components/sections/AboutSection";
+import EventsSection from "@/components/sections/EventsSection";
+import EventsGeometry from "@/components/three/EventsGeometry";
 import FooterSection from "@/components/sections/FooterSection";
 import ContactSignal from "@/components/sections/ContactSignal";
 
@@ -72,6 +74,8 @@ export default function Home() {
       <MouseLightOverlay />
 
       <AboutSection />
+      <EventsGeometry />
+      <EventsSection />
       <FooterSection />
       <ContactSignal />
       <BandcampPlayer />
