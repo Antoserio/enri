@@ -319,13 +319,13 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
 
       if (isMobile) {
         // En móvil: cámara gira alrededor de la espiral, mirando hacia el centro
-        const spiralRadius = 4.5;
+        const spiralRadius = 5;
         const cameraAngle = progress * Math.PI * 4;  // Gira conforme scrolleas
         const camX = Math.cos(cameraAngle) * spiralRadius;
-        const camY = Math.sin(cameraAngle) * spiralRadius * 0.5;
-        const camZ = 3 - (progress * 50);
-        camera.position.set(camX, camY, camZ);
-        camera.lookAt(0, 0, camZ - 2);
+        const camY = Math.sin(cameraAngle) * spiralRadius * 0.6;
+        const centerZ = -25 + (progress * 55);  // Centro de la cámara sigue el scroll
+        camera.position.set(camX, camY, centerZ);
+        camera.lookAt(0, 0, centerZ);
       } else {
         // Desktop: original complex curve logic
         if (progress < 0.02) {
