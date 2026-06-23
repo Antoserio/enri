@@ -149,7 +149,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 1.4 : 3.2;
+      const sideOffset = isPortrait ? 0.9 : 3.2;
       const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
@@ -159,8 +159,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenW = isPortrait ? 1.3 : 3.4;
-      const screenH = isPortrait ? 1.8 : 1.9;
+      const screenW = isPortrait ? 0.9 : 3.4;
+      const screenH = isPortrait ? 1.2 : 1.9;
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -173,8 +173,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameW = isPortrait ? 1.5 : 3.7;
-      const frameH = isPortrait ? 2.0 : 2.2;
+      const frameW = isPortrait ? 1.0 : 3.7;
+      const frameH = isPortrait ? 1.35 : 2.2;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
