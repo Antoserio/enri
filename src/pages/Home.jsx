@@ -97,10 +97,13 @@ export default function Home() {
   const { t } = useLanguage();
 
   const handleProjectClick = useCallback((project) => {
-    setSelectedProject(project);
-    if (project.tracks && project.id !== "album-epv") {
-      setAudioProject(project);
+    if (project.tracks) {
+      // Has audio — open player (EPV is default, others load their tracks)
+      if (project.id !== "album-epv") setAudioProject(project);
       setPlayerOpen(true);
+    } else {
+      // No audio — show image modal
+      setSelectedProject(project);
     }
   }, []);
 

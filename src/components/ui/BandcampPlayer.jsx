@@ -119,6 +119,19 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
         </span>
       </motion.button>
 
+      {/* Mobile backdrop — tap outside panel to close */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 md:hidden"
+            onClick={toggle}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Panel */}
       <AnimatePresence>
         {isOpen && (
@@ -127,7 +140,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-24 left-8 z-40 w-[360px] max-w-[calc(100vw-4rem)] rounded-2xl overflow-hidden glass-panel"
+            className="fixed bottom-24 left-4 md:left-8 z-40 w-[340px] max-w-[calc(100vw-2rem)] rounded-2xl overflow-hidden glass-panel"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-quartz/10">
@@ -137,21 +150,23 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
               </div>
               <button
                 onClick={toggle}
-                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-quartz/10 transition-colors text-quartz/40 hover:text-quartz shrink-0 ml-2"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-quartz/10 active:bg-quartz/20 transition-colors text-quartz/40 hover:text-quartz shrink-0 ml-2 touch-manipulation"
+                aria-label="Cerrar reproductor"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Album art + progress */}
+            {/* Album art + progress — smaller on mobile */}
             <div className="relative">
               <img
                 src={album.image}
                 alt={album.title}
-                className="w-full aspect-square object-cover"
+                className="w-full object-cover aspect-square md:aspect-square"
+                style={{ maxHeight: "clamp(120px, 35vw, 280px)" }}
               />
               <div
-                className="absolute bottom-0 left-0 right-0 h-1 bg-quartz/20 cursor-pointer"
+                className="absolute bottom-0 left-0 right-0 h-1.5 bg-quartz/20 cursor-pointer"
                 onClick={seek}
               >
                 <div className="h-full bg-cobalt transition-all duration-100" style={{ width: `${progress}%` }} />
@@ -162,13 +177,13 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
             <div className="flex items-center justify-between px-6 py-3 border-b border-quartz/10">
               <button
                 onClick={() => loadAndPlay(((currentIdx ?? 0) - 1 + album.tracks.length) % album.tracks.length)}
-                className="text-quartz/40 hover:text-quartz transition-colors p-1"
+                className="text-quartz/40 hover:text-quartz transition-colors p-2 touch-manipulation"
               >
                 <SkipBack className="w-4 h-4" />
               </button>
               <button
                 onClick={() => currentIdx !== null ? handleTrack(currentIdx) : loadAndPlay(0)}
-                className="w-9 h-9 rounded-full bg-cobalt flex items-center justify-center text-white hover:bg-cobalt/80 transition-colors"
+                className="w-11 h-11 rounded-full bg-cobalt flex items-center justify-center text-white hover:bg-cobalt/80 active:bg-cobalt/70 transition-colors touch-manipulation"
               >
                 {isPlaying
                   ? <Pause className="w-4 h-4" fill="currentColor" />
@@ -177,20 +192,20 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
               </button>
               <button
                 onClick={() => loadAndPlay(((currentIdx ?? -1) + 1) % album.tracks.length)}
-                className="text-quartz/40 hover:text-quartz transition-colors p-1"
+                className="text-quartz/40 hover:text-quartz transition-colors p-2 touch-manipulation"
               >
                 <SkipForward className="w-4 h-4" />
               </button>
             </div>
 
             {/* Tracklist */}
-            <div className="max-h-[200px] overflow-y-auto">
+            <div className="max-h-[160px] md:max-h-[200px] overflow-y-auto">
               {album.tracks.map((track, i) => (
                 <button
                   key={i}
                   onClick={() => handleTrack(i)}
-                  className={`flex items-center gap-3 px-4 py-2.5 w-full text-left transition-colors group ${
-                    currentIdx === i ? "bg-cobalt/10" : "hover:bg-quartz/5"
+                  className={`flex items-center gap-3 px-4 py-3 w-full text-left transition-colors group touch-manipulation ${
+                    currentIdx === i ? "bg-cobalt/10" : "hover:bg-quartz/5 active:bg-quartz/10"
                   }`}
                 >
                   <span className="w-4 text-center shrink-0">
