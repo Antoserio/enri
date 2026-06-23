@@ -3,12 +3,13 @@ import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
 const R        = 3.0;    // helix radius
-const PITCH    = 1.15;   // vertical gap between cards
-const CARD_W   = 2.6;    // card width  (3D units)
-const CARD_H   = 1.46;   // card height (≈ 16:9)
+const PITCH    = 0.55;   // vertical gap (tight, more cards visible)
+const CARD_W   = 2.4;    // card width  (3D units)
+const CARD_H   = 1.35;   // card height (≈ 16:9)
 const SEGS_W   = 24;     // horizontal subdivisions (for bending)
 const SEGS_H   = 14;     // vertical subdivisions
-const MAX_BEND = 0.52;   // max centre-bulge depth
+const MAX_BEND = 0.55;   // max centre-bulge depth (inward)
+const REPEAT   = 3;      // repeat cards N times around helix (dense + infinite feel)
 const BLUE     = 0x1A56DB;
 const TWO_PI   = Math.PI * 2;
 
@@ -18,7 +19,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
-    const N = projects.length;
+    const N     = projects.length;
+    const TOTAL = N * REPEAT;   // total card slots in helix (15 for 5 projects)
 
     // ── Renderer ─────────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -90,28 +92,36 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     const origPos    = [];  // original vertex positions per card
     const geos       = [];
 
-    projects.forEach((proj, i) => {
+    // Cache textures so repeated slots reuse the same texture object
+    const texCache = {};
+    const getTexture = (src) => {
+      if (!texCache[src]) {
+        const tex = loader.load(src);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        texCache[src] = tex;
+      }
+      return texCache[src];
+    };
+
+    for (let i = 0; i < TOTAL; i++) {
+      const proj = projects[i % N];  // repeat projects cyclically
+
       const geo = new THREE.PlaneGeometry(CARD_W, CARD_H, SEGS_W, SEGS_H);
       geos.push(geo);
       origPos.push(new Float32Array(geo.attributes.position.array));
 
       const mat = new THREE.MeshStandardMaterial({
+        map: getTexture(proj.image),
         roughness: 0.3, metalness: 0.05,
         transparent: true, opacity: 1,
-        side: THREE.DoubleSide,  // visible from both sides when curved
-      });
-
-      loader.load(proj.image, (tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        mat.map = tex;
-        mat.needsUpdate = true;
+        side: THREE.DoubleSide,
       });
 
       const mesh = new THREE.Mesh(geo, mat);
       mesh.userData.project = proj;
       scene.add(mesh);
       cardMeshes.push(mesh);
-    });
+    }
 
     // ── Scroll state ──────────────────────────────────────────────────────────
     let scrollAngle  = 0;
@@ -181,7 +191,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         const t = ox / (CARD_W * 0.5);          // –1 … +1
         pos.setX(v, ox);
         pos.setY(v, oy);
-        pos.setZ(v, bendAmt * (1 - t * t));     // local +Z = outward from helix
+        pos.setZ(v, -bendAmt * (1 - t * t));    // negative = inward toward helix centre
       }
       pos.needsUpdate = true;
       geo.computeVertexNormals();
@@ -203,12 +213,12 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       scrollAngle += (targetAngle - scrollAngle) * 0.06;
 
       // ── Place & bend cards ──
-      const maxY      = (N / 2) * PITCH;
+      const maxY      = (TOTAL / 2) * PITCH;
       let   frontIdx  = 0;
       let   minAngle  = Infinity;
 
       cardMeshes.forEach((mesh, i) => {
-        const totalAngle = (i / N) * TWO_PI - scrollAngle;
+        const totalAngle = (i / TOTAL) * TWO_PI - scrollAngle;
 
         // Wrap to [–π, π] for y and bend calculation
         const normAngle = ((totalAngle + Math.PI) % TWO_PI + TWO_PI) % TWO_PI - Math.PI;
@@ -236,9 +246,11 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         }
       });
 
+      // Map slot index back to actual project
+      const frontProject = projects[frontIdx % N];
       if (frontIdx !== lastFront) {
         lastFront = frontIdx;
-        onActiveProject?.(projects[frontIdx]);
+        onActiveProject?.(frontProject);
       }
 
       // ── Sphere ──

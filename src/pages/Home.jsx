@@ -83,8 +83,19 @@ const PROJECTS = [
 
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
-  const [activeProject, setActiveProject] = useState(null);
+  const [activeProject,   setActiveProject]   = useState(null);
+  const [audioProject,    setAudioProject]     = useState(null); // null = default EPV
+  const [playerOpen,      setPlayerOpen]       = useState(false);
   const { t } = useLanguage();
+
+  const handleProjectClick = (project) => {
+    setSelectedProject(project);
+    // If project has non-EPV tracks, load them in the player and open it
+    if (project.tracks && project.id !== "album-epv") {
+      setAudioProject(project);
+      setPlayerOpen(true);
+    }
+  };
 
   return (
     <div className="relative" style={{ background: "#0A0A0B" }}>
@@ -93,7 +104,7 @@ export default function Home() {
       <div className="relative h-screen overflow-hidden">
         <SpiralSlider
           projects={PROJECTS}
-          onProjectClick={setSelectedProject}
+          onProjectClick={handleProjectClick}
           onActiveProject={setActiveProject}
         />
 
@@ -148,7 +159,11 @@ export default function Home() {
       <EventsSection />
       <FooterSection />
       <ContactSignal />
-      <BandcampPlayer />
+      <BandcampPlayer
+        audioProject={audioProject}
+        isOpen={playerOpen}
+        onOpenChange={setPlayerOpen}
+      />
 
       {selectedProject && (
         <VideoModal
