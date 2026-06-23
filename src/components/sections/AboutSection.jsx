@@ -49,9 +49,11 @@ export default function AboutSection() {
               <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-cobalt font-body mb-4">
                 <User className="w-3.5 h-3.5" /> {t.about.artistLabel}
               </p>
-              <p className="text-quartz/40 font-body font-light text-base md:text-lg max-w-3xl" style={{ lineHeight: 1.7 }}>
-                {t.about.bio}
-              </p>
+              <div className="space-y-4 text-quartz/40 font-body font-light text-base md:text-lg max-w-3xl" style={{ lineHeight: 1.7 }}>
+                {t.about.bio.split("\n\n").map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+              </div>
             </div>
 
             <div className="mt-12 pt-12 border-t border-quartz/10">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import EventsGeometry from "@/components/three/EventsGeometry";
 
@@ -12,61 +12,32 @@ export default function EventsSection() {
     setEvents([
       {
         id: 1,
-        title: "Resonancia Audiovisual",
-        date: "2026-08-15",
-        time: "20:00",
-        location: "Centro Cultural — Madrid",
-        type: "concert"
+        title: "Espacio Premeditadamente Vacío · Live/AV",
+        date: "2026-05-23",
+        location: "Casabanchel — Madrid",
+        type: "live"
       },
       {
         id: 2,
-        title: "Void Architecture — Instalación Inmersiva",
-        date: "2026-09-02",
-        time: "18:00",
-        location: "Museo de Arte Contemporáneo — Barcelona",
-        type: "installation"
+        title: "Presentación álbum · Coloquio y escucha activa",
+        date: "2026-04-24",
+        location: "Espacio Montreal — Madrid",
+        type: "presentacion"
       },
       {
         id: 3,
-        title: "Identidad Generativa — Taller",
-        date: "2026-09-20",
-        time: "15:00",
-        location: "Estudio Base44 — Valencia",
-        type: "workshop"
+        title: "Espacio Premeditadamente Vacío · Estreno Live/AV",
+        date: "2025-10-25",
+        location: "Cruce Contemporáneo — Madrid",
+        type: "live"
       },
-      {
-        id: 4,
-        title: "Exposición: Fractales del Silencio",
-        date: "2026-10-10",
-        time: "11:00",
-        location: "Galería Nova — Bilbao",
-        type: "exhibition"
-      },
-      {
-        id: 5,
-        title: "Performance en Vivo — Signal/Noise",
-        date: "2026-11-05",
-        time: "21:00",
-        location: "Teatro Reina Victoria — Madrid",
-        type: "concert"
-      },
-      {
-        id: 6,
-        title: "Noche de Instalaciones Digitales",
-        date: "2026-12-01",
-        time: "19:30",
-        location: "Espacio Experimental — Sevilla",
-        type: "installation"
-      }
     ]);
   }, []);
 
   const getEventColor = (type) => {
     const colors = {
-      concert: "text-cobalt",
-      installation: "text-amber-400",
-      exhibition: "text-emerald-400",
-      workshop: "text-rose-400"
+      live: "text-cobalt",
+      presentacion: "text-quartz/50",
     };
     return colors[type] || "text-cobalt";
   };
@@ -83,10 +54,10 @@ export default function EventsSection() {
           className="mb-16"
         >
           <p className="text-xs md:text-sm tracking-widest uppercase text-cobalt mb-3 font-body">
-            Próximos
+            Conciertos
           </p>
           <h2 className="font-display font-bold text-quartz leading-tight" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-            Eventos & Experiencias
+            Directos & Presentaciones
           </h2>
         </motion.div>
 
@@ -114,10 +85,6 @@ export default function EventsSection() {
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-cobalt" />
                       <span>{new Date(event.date).toLocaleDateString("es-ES", { month: "long", day: "numeric", year: "numeric" })}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-cobalt" />
-                      <span>{event.time}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-cobalt" />
