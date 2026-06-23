@@ -20,6 +20,7 @@ export default function NavBar() {
   const links = [
     { label: t.nav.obra, href: "#scroll-experience" },
     { label: t.nav.about, href: "#about" },
+    { label: t.nav.eventos, href: "#eventos" },
     { label: t.nav.contact, href: "#contact", isContact: true },
     { label: t.nav.bandcamp, href: "https://enrilaforet.bandcamp.com/album/espacio-premeditadamente-vac-o" },
   ];

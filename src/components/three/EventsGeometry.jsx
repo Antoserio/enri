@@ -14,7 +14,7 @@ export default function EventsGeometry() {
     
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x0A0A0B, 0);
+    renderer.setClearColor(0x0A0A0B, 1);
     
     camera.position.z = 5;
 
@@ -123,7 +123,7 @@ export default function EventsGeometry() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-screen pointer-events-none opacity-20 -z-10"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40 z-0"
       aria-hidden="true"
     />
   );

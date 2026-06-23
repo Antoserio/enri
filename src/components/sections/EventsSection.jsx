@@ -71,7 +71,7 @@ export default function EventsSection() {
   };
 
   return (
-    <section className="relative min-h-screen py-24 px-6 md:px-12 bg-gradient-to-b from-obsidian via-obsidian/95 to-obsidian">
+    <section id="eventos" className="relative min-h-screen py-24 px-6 md:px-12 bg-gradient-to-b from-obsidian via-obsidian/95 to-obsidian">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

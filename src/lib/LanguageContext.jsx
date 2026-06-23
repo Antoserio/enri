@@ -4,7 +4,7 @@ const LanguageContext = createContext();
 
 const translations = {
   es: {
-    nav: { obra: "Obra", about: "About", contact: "Contacto", bandcamp: "Bandcamp" },
+    nav: { obra: "Obra", about: "About", eventos: "Eventos", contact: "Contacto", bandcamp: "Bandcamp" },
     hero: {
       tagline: "Enri La Forêt · 2026",
       title1: "Espacio",
@@ -69,7 +69,7 @@ const translations = {
     },
   },
   en: {
-    nav: { obra: "Work", about: "About", contact: "Contact", bandcamp: "Bandcamp" },
+    nav: { obra: "Work", about: "About", eventos: "Events", contact: "Contact", bandcamp: "Bandcamp" },
     hero: {
       tagline: "Enri La Forêt · 2026",
       title1: "Deliberately",
