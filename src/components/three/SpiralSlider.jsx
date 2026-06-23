@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
 const R        = 3.2;    // helix radius
-const PITCH    = 0.88;   // vertical gap — breathing room between cards
+const PITCH    = 1.05;   // vertical gap — breathing room between cards
 const CARD_W   = 2.4;    // card width  (3D units)
 const CARD_H   = 1.35;   // card height (≈ 16:9)
 const SEGS_W   = 24;     // horizontal subdivisions (for bending)
@@ -205,8 +205,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       const dt      = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Slow drift: right + down
-      targetAngle -= 0.0015;
+      // Very slow drift: right + down
+      targetAngle -= 0.0006;
 
       // Smooth damp
       scrollAngle += (targetAngle - scrollAngle) * 0.06;
@@ -234,9 +234,10 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         // Vertex bending (physical curve as card rounds the spiral)
         applyBend(geos[i], origPos[i], normAngle);
 
-        // Opacity by frontness
+        // Opacity by frontness — hide back-facing cards completely to prevent y-wrap flash
         const frontness = (Math.cos(normAngle) + 1) / 2;
-        mesh.material.opacity = 0.12 + 0.88 * frontness;
+        mesh.visible = frontness > 0.06;
+        mesh.material.opacity = 0.1 + 0.9 * frontness;
 
         // Track which card is at front
         if (Math.abs(normAngle) < minAngle) {
