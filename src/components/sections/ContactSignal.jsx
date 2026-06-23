@@ -71,8 +71,8 @@ export default function ContactSignal() {
                   <div className="w-16 h-16 rounded-full bg-cobalt/10 flex items-center justify-center mx-auto mb-6">
                     <Send className="w-6 h-6 text-cobalt" />
                   </div>
-                  <h3 className="font-display font-bold text-2xl text-quartz mb-2">Signal Received</h3>
-                  <p className="text-quartz/40 font-body">We'll be in touch soon.</p>
+                  <h3 className="font-display font-bold text-2xl text-quartz mb-2">Señal Recibida</h3>
+                  <p className="text-quartz/40 font-body">Estaré en contacto pronto.</p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -81,21 +81,21 @@ export default function ContactSignal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.6 }}
                 >
-                  <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">The Signal</p>
+                  <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">Contacto</p>
                   <h2
                     className="font-display font-bold text-quartz mb-12"
                     style={{ fontSize: "clamp(1.5rem, 3vw, 3rem)" }}
                   >
-                    Let's Create Together
+                    Hablemos
                   </h2>
 
                   <div className="space-y-8">
                     <div>
-                      <label htmlFor="contact-name" className="sr-only">Name</label>
+                      <label htmlFor="contact-name" className="sr-only">Nombre</label>
                       <input
                         id="contact-name"
                         type="text"
-                        placeholder="Your Name"
+                        placeholder="Tu Nombre"
                         required
                         value={formState.name}
                         onChange={(e) => setFormState(s => ({ ...s, name: e.target.value }))}
@@ -107,7 +107,7 @@ export default function ContactSignal() {
                       <input
                         id="contact-email"
                         type="email"
-                        placeholder="Email Address"
+                        placeholder="Email"
                         required
                         value={formState.email}
                         onChange={(e) => setFormState(s => ({ ...s, email: e.target.value }))}
@@ -115,10 +115,10 @@ export default function ContactSignal() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="contact-message" className="sr-only">Message</label>
+                      <label htmlFor="contact-message" className="sr-only">Mensaje</label>
                       <textarea
                         id="contact-message"
-                        placeholder="Tell us about your project"
+                        placeholder="Cuéntame tu propuesta"
                         rows={4}
                         required
                         value={formState.message}
@@ -132,7 +132,7 @@ export default function ContactSignal() {
                     type="submit"
                     className="mt-12 group flex items-center gap-3 text-lg font-display font-semibold text-quartz hover:text-cobalt transition-colors focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md px-2 py-1"
                   >
-                    Send Signal
+                    Enviar Señal
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </motion.form>

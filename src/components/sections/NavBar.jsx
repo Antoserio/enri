@@ -14,9 +14,9 @@ export default function NavBar() {
   }, []);
 
   const links = [
-    { label: "Work", href: "#scroll-experience" },
+    { label: "Obra", href: "#scroll-experience" },
     { label: "About", href: "#about" },
-    { label: "Contact", href: "mailto:hello@studio.com" },
+    { label: "Bandcamp", href: "https://enrilaforet.bandcamp.com/album/espacio-premeditadamente-vac-o" },
   ];
 
   return (
@@ -30,8 +30,8 @@ export default function NavBar() {
         }`}
       >
         <div className="flex items-center justify-between px-[5vw] md:px-[10vw] py-5">
-          <a href="#" className="font-display font-bold text-lg text-quartz tracking-tight">
-            Studio<span className="text-cobalt">.</span>
+          <a href="#" className="font-display font-bold text-base md:text-lg text-quartz tracking-tight">
+            Enri La Forêt
           </a>
 
           <div className="hidden md:flex items-center gap-10">

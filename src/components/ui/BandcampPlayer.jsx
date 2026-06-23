@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Music, X, ExternalLink, Calendar, Tag, User, Disc } from "lucide-react";
 
 export default function BandcampPlayer() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
 
   return (
@@ -60,10 +60,10 @@ export default function BandcampPlayer() {
 
             {/* Bandcamp iframe — full album with tracklist */}
             <iframe
-              src="https://bandcamp.com/EmbeddedPlayer/album=2297333929/size=large/bgcol=0a0a0b/linkcol=4d4dff/transparent=true/"
-              seamless
+              src="https://bandcamp.com/EmbeddedPlayer/album=2297333929/size=large/bgcol=0a0a0b/linkcol=4d4dff/tracklist=true/transparent=true/"
               className="w-full"
               style={{ border: 0, height: showInfo ? 300 : 470 }}
+              allow="autoplay; encrypted-media"
               title="Espacio Premeditadamente Vacío — Enri La Forêt"
             />
 

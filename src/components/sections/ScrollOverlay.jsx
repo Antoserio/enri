@@ -51,21 +51,23 @@ export default function ScrollOverlay({ projects }) {
             className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
           >
             <p className="text-xs md:text-sm tracking-widest uppercase text-quartz/40 mb-4 font-body">
-              Creative Studio
+              Enri La Forêt · 2026
             </p>
             <h1
               className="font-display font-bold text-quartz leading-none"
-              style={{ fontSize: "clamp(2.5rem, 8vw, 9rem)" }}
+              style={{ fontSize: "clamp(2rem, 7vw, 7.5rem)" }}
             >
-              We Create
+              Espacio
               <br />
-              <span className="text-cobalt">Worlds</span>
+              <span className="text-cobalt">Premeditadamente</span>
+              <br />
+              Vacío
             </h1>
             <p
               className="mt-6 text-base md:text-lg text-quartz/40 font-body font-light max-w-xl"
               style={{ lineHeight: 1.6 }}
             >
-              Immersive digital experiences at the intersection of art, technology, and emotion.
+              Primer álbum · Live/AV · Techno industrial, ambient, voces corales y poesía.
             </p>
             <motion.div
               animate={{ y: [0, 8, 0] }}
@@ -73,7 +75,7 @@ export default function ScrollOverlay({ projects }) {
               className="absolute bottom-12 flex flex-col items-center gap-2"
             >
               <span className="text-[10px] md:text-xs tracking-widest uppercase text-quartz/30 font-body">
-                Scroll to explore
+                Scroll para explorar
               </span>
               <ChevronDown className="w-4 h-4 text-quartz/30" />
             </motion.div>
@@ -103,7 +105,7 @@ export default function ScrollOverlay({ projects }) {
             </h2>
             <div className="mt-3 flex items-center justify-center gap-2 text-xs md:text-sm text-quartz/30 font-body">
               <MousePointerClick className="w-4 h-4" />
-              <span>Click to explore</span>
+              <span>Click para explorar</span>
             </div>
           </motion.div>
         )}
@@ -120,7 +122,7 @@ export default function ScrollOverlay({ projects }) {
             className="absolute inset-0 flex items-center justify-center text-center"
           >
             <div className="flex flex-col items-center gap-3">
-              <p className="text-xs tracking-widest uppercase text-quartz/40 font-body">Continue</p>
+              <p className="text-xs tracking-widest uppercase text-quartz/40 font-body">Continuar</p>
               <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
                 <ChevronDown className="w-6 h-6 text-quartz/40" />
               </motion.div>
