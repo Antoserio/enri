@@ -149,7 +149,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 2.8 : 3.2;
+      const sideOffset = isPortrait ? 1.9 : 3.2;
       const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
@@ -159,8 +159,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenW = isPortrait ? 0.40 : 3.0;
-      const screenH = isPortrait ? 0.65 : 1.7;
+      const screenW = isPortrait ? 0.25 : 3.0;
+      const screenH = isPortrait ? 0.40 : 1.7;
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -173,8 +173,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameW = isPortrait ? 0.75 : 3.35;
-      const frameH = isPortrait ? 1.0 : 1.95;
+      const frameW = isPortrait ? 0.48 : 3.35;
+      const frameH = isPortrait ? 0.62 : 1.95;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
@@ -353,7 +353,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
           tempObj.position.copy(group.position);
           tempObj.lookAt(camera.position);
           const cameraQuat = tempObj.quaternion.clone();
-          group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, proximity);
+          const limitedProximity = Math.min(proximity, 0.35);
+          group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, limitedProximity);
 
           screen.material.opacity = 0.3 + proximity * 0.7;
           frame.material.opacity = 0.04 + proximity * 0.35;
