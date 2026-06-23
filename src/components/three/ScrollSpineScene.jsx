@@ -382,8 +382,17 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       if (!reducedMotion) {
         screenData.forEach(({ screen, frame, group, baseY, t, index, defaultQuat }) => {
           if (isMobile) {
-            // En móvil: espiral + orientación dinámica hacia cámara
-            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 2.5);
+            // En móvil: ESPIRAL DINÁMICA que baja con el scroll
+            const scrollOffset = progress * projects.length;
+            const itemProgress = (scrollOffset - index) % projects.length;
+            const angle = (itemProgress / projects.length) * Math.PI * 2;
+            const spiralRadius = 4;
+
+            // Posición en espiral bajando dinámicamente
+            const xPos = Math.cos(angle) * spiralRadius;
+            const yPos = Math.sin(angle) * spiralRadius;
+            const zPos = -8 - (index / projects.length) * 50 - (progress * 50);
+            group.position.set(xPos, yPos, zPos);
 
             // Orienta cada pantalla hacia la cámara para máxima visibilidad
             tempObj.position.copy(group.position);
@@ -391,6 +400,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
             const cameraQuat = tempObj.quaternion.clone();
             group.quaternion.slerpQuaternions(defaultQuat, cameraQuat, 0.8);
 
+            const proximity = Math.max(0, 1 - Math.abs(progress - t) * 2.5);
             screen.material.opacity = 0.5 + proximity * 0.5;
             frame.material.opacity = 0.1 + proximity * 0.3;
             screen.scale.setScalar(0.85 + proximity * 0.4);
