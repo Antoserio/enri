@@ -59,8 +59,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x0A0A0B, isMobile ? 8 : 10, isMobile ? 40 : 50);
 
-    // Narrower FOV on portrait for a more controlled, orderly view
-    const baseFov = isPortrait ? 60 : 65;
+    // Wider FOV on portrait to fit screens in narrow horizontal view
+    const baseFov = isPortrait ? 85 : 65;
     const camera = new THREE.PerspectiveCamera(baseFov, window.innerWidth / window.innerHeight, 0.1, 200);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
@@ -149,7 +149,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       const up = new THREE.Vector3(0, 1, 0);
       const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const side = i % 2 === 0 ? 1 : -1;
-      const sideOffset = isPortrait ? 0.9 : 3.2;
+      const sideOffset = isPortrait ? 1.2 : 3.2;
       const screenPos = point.clone().add(right.multiplyScalar(sideOffset * side));
 
       const group = new THREE.Group();
@@ -159,8 +159,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       scene.add(group);
 
       // Screen plane
-      const screenW = isPortrait ? 0.9 : 3.4;
-      const screenH = isPortrait ? 1.2 : 1.9;
+      const screenW = isPortrait ? 0.7 : 3.4;
+      const screenH = isPortrait ? 1.0 : 1.9;
       const screenGeo = new THREE.PlaneGeometry(screenW, screenH);
       const texture = textureLoader.load(project.image);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -173,8 +173,8 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
       screens.push(screen);
 
       // Frame glow
-      const frameW = isPortrait ? 1.0 : 3.7;
-      const frameH = isPortrait ? 1.35 : 2.2;
+      const frameW = isPortrait ? 0.8 : 3.7;
+      const frameH = isPortrait ? 1.15 : 2.2;
       const frameGeo = new THREE.PlaneGeometry(frameW, frameH);
       const frameMat = new THREE.MeshBasicMaterial({
         color: 0x4D4DFF, transparent: true, opacity: 0.05,
@@ -277,7 +277,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
     // --- Resize ---
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
-      camera.fov = window.innerHeight > window.innerWidth ? 60 : 65;
+      camera.fov = window.innerHeight > window.innerWidth ? 85 : 65;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
@@ -317,7 +317,7 @@ export default function ScrollSpineScene({ projects, onScreenClick }) {
         if (nearestScreenPos && maxProx > 0.1) {
           const blend = maxProx * maxProx * 0.9;
           lookPos = lookPos.clone().lerp(nearestScreenPos, blend);
-          const posBlend = isPortrait ? 0 : maxProx * maxProx * 0.35;
+          const posBlend = isPortrait ? maxProx * maxProx * 0.15 : maxProx * maxProx * 0.35;
           const adjustedCamPos = posBlend > 0 ? camPos.clone().lerp(nearestScreenPos, posBlend) : camPos;
           camera.position.copy(adjustedCamPos);
         } else {
