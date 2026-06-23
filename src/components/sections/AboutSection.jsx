@@ -1,14 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, Disc, User } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function AboutSection() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="about"
       className="relative py-24 md:py-40 border-t border-quartz/5"
       style={{ background: "#0A0A0B" }}
-      aria-label="Sobre Enri La Forêt"
+      aria-label="About Enri La Forêt"
     >
       <div className="px-[5vw] md:px-[10vw]">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
@@ -19,7 +22,7 @@ export default function AboutSection() {
             transition={{ duration: 0.8 }}
             className="md:col-span-3"
           >
-            <p className="text-xs tracking-widest uppercase text-cobalt font-body">Sobre</p>
+            <p className="text-xs tracking-widest uppercase text-cobalt font-body">{t.about.label}</p>
           </motion.div>
 
           <motion.div
@@ -37,64 +40,38 @@ export default function AboutSection() {
             </h2>
 
             <div className="space-y-6 text-quartz/40 font-body font-light text-base md:text-lg max-w-3xl" style={{ lineHeight: 1.7 }}>
-              <p>
-                Es el primer álbum del músico y compositor Enri La Forêt. Nace de una propuesta
-                sonora en formato Live/AV, muy cercana a las artes vivas, en la que música, imagen
-                de gran formato, poesía, texto y voz conforman un dispositivo artístico expandido
-                que culmina con la publicación de este LP.
-              </p>
-              <p>
-                Su deseo es el de invitar a reflexionar de forma crítica acerca de las violencias
-                sistémicas y las estructuras de poder a las que nos vemos sometidxs y atravesadxs
-                como sociedad y como individuos. Y, sobre todo, existe la voluntad de abrir un
-                espacio de pensamiento para imaginar formas más conscientes y humanas de
-                relacionarnos con nuestro presente y nuestro futuro, dentro del contexto
-                turbocapitalista actual.
-              </p>
-              <p>
-                La arquitectura sonora de este álbum transiciona desde sonidos crudos y beats
-                rotundos propios del techno industrial, hasta armonías luminosas generadas con
-                sintetizadores, arpegiadores y voces corales, pasando por texturas ambientales
-                creadas con pianos preparados y samples de voces. La textualidad y la poesía
-                actúan como elementos vehiculares de esta propuesta y están muy presentes a lo
-                largo de todo el álbum.
-              </p>
+              <p>{t.about.p1}</p>
+              <p>{t.about.p2}</p>
+              <p>{t.about.p3}</p>
             </div>
 
-            {/* Bio del artista */}
             <div className="mt-12 pt-12 border-t border-quartz/10">
               <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-cobalt font-body mb-4">
-                <User className="w-3.5 h-3.5" /> El Artista
+                <User className="w-3.5 h-3.5" /> {t.about.artistLabel}
               </p>
               <p className="text-quartz/40 font-body font-light text-base md:text-lg max-w-3xl" style={{ lineHeight: 1.7 }}>
-                Enri La Forêt es músico de formación clásica, residente en Madrid. Actualmente
-                enfocado en la composición musical electrónica, su campo de creación se basa en la
-                búsqueda de lugares de encuentro entre sonoridades múltiples y en la
-                experimentación con otros lenguajes —imagen, texto, voz o artes vivas— para
-                construir dispositivos artísticos desde los que manifestar narrativas disidentes.
+                {t.about.bio}
               </p>
             </div>
 
-            {/* Créditos */}
             <div className="mt-12 pt-12 border-t border-quartz/10">
               <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-cobalt font-body mb-4">
-                <Calendar className="w-3.5 h-3.5" /> Créditos
+                <Calendar className="w-3.5 h-3.5" /> {t.about.creditsLabel}
               </p>
-              <p className="text-sm text-quartz/25 font-body mb-6">Lanzado el 20 de marzo de 2026</p>
+              <p className="text-sm text-quartz/25 font-body mb-6">{t.about.released}</p>
               <ul className="space-y-2 text-quartz/40 font-body text-sm max-w-3xl" style={{ lineHeight: 1.6 }}>
-                <li><span className="text-quartz/60">Música original, composición e interpretación:</span> Enri La Forêt</li>
-                <li><span className="text-quartz/60">Producción y arreglos:</span> Enri La Forêt y Rubén Kielmannsegge</li>
-                <li><span className="text-quartz/60">Mezcla:</span> Rubén Kielmannsegge</li>
-                <li><span className="text-quartz/60">Mastering:</span> Carlos Koschitzky</li>
-                <li><span className="text-quartz/60">Diseño de arte:</span> Raquel G. Ibáñez</li>
-                <li><span className="text-quartz/60">Sumergirse en el naufragio:</span> Letra del poema homónimo de Adrienne Rich, traducido por Patricia Gonzalo de Jesús (Editorial Sexto Piso, 2021). Narrado por Helena Mariño.</li>
+                <li><span className="text-quartz/60">{t.about.music}</span> Enri La Forêt</li>
+                <li><span className="text-quartz/60">{t.about.production}</span> Enri La Forêt y Rubén Kielmannsegge</li>
+                <li><span className="text-quartz/60">{t.about.mix}</span> Rubén Kielmannsegge</li>
+                <li><span className="text-quartz/60">{t.about.mastering}</span> Carlos Koschitzky</li>
+                <li><span className="text-quartz/60">{t.about.art}</span> Raquel G. Ibáñez</li>
+                <li><span className="text-quartz/60">{t.about.poem}</span> {t.about.poemDesc}</li>
               </ul>
             </div>
 
-            {/* Tracklist */}
             <div className="mt-12 pt-12 border-t border-quartz/10">
               <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-cobalt font-body mb-4">
-                <Disc className="w-3.5 h-3.5" /> Tracklist
+                <Disc className="w-3.5 h-3.5" /> {t.about.tracklistLabel}
               </p>
               <ol className="space-y-3 max-w-2xl">
                 {[
@@ -122,9 +99,8 @@ export default function AboutSection() {
               </ol>
             </div>
 
-            {/* Tags */}
             <div className="mt-12 pt-12 border-t border-quartz/10">
-              <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">Tags</p>
+              <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">{t.about.tagsLabel}</p>
               <div className="flex flex-wrap gap-2">
                 {["electronic", "experimental", "ambient electronic", "contemporary classical", "techno", "Madrid"].map(tag => (
                   <span key={tag} className="px-3 py-1 rounded-full bg-quartz/5 text-quartz/40 text-xs font-body">

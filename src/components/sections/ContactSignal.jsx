@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, ArrowRight } from "lucide-react";
 import MagneticButton from "@/components/ui/MagneticButton";
+import SocialIcons from "@/components/ui/SocialIcons";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function ContactSignal() {
   const [isOpen, setIsOpen] = useState(false);
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    const openContact = () => setIsOpen(true);
+    window.addEventListener("open-contact", openContact);
+    return () => window.removeEventListener("open-contact", openContact);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,8 +80,8 @@ export default function ContactSignal() {
                   <div className="w-16 h-16 rounded-full bg-cobalt/10 flex items-center justify-center mx-auto mb-6">
                     <Send className="w-6 h-6 text-cobalt" />
                   </div>
-                  <h3 className="font-display font-bold text-2xl text-quartz mb-2">Señal Recibida</h3>
-                  <p className="text-quartz/40 font-body">Estaré en contacto pronto.</p>
+                  <h3 className="font-display font-bold text-2xl text-quartz mb-2">{t.contact.sent}</h3>
+                  <p className="text-quartz/40 font-body">{t.contact.sentDesc}</p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -81,21 +90,21 @@ export default function ContactSignal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.6 }}
                 >
-                  <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">Contacto</p>
+                  <p className="text-xs tracking-widest uppercase text-cobalt font-body mb-4">{t.contact.label}</p>
                   <h2
                     className="font-display font-bold text-quartz mb-12"
                     style={{ fontSize: "clamp(1.5rem, 3vw, 3rem)" }}
                   >
-                    Hablemos
+                    {t.contact.title}
                   </h2>
 
                   <div className="space-y-8">
                     <div>
-                      <label htmlFor="contact-name" className="sr-only">Nombre</label>
+                      <label htmlFor="contact-name" className="sr-only">{t.contact.namePlaceholder}</label>
                       <input
                         id="contact-name"
                         type="text"
-                        placeholder="Tu Nombre"
+                        placeholder={t.contact.namePlaceholder}
                         required
                         value={formState.name}
                         onChange={(e) => setFormState(s => ({ ...s, name: e.target.value }))}
@@ -103,11 +112,11 @@ export default function ContactSignal() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="contact-email" className="sr-only">Email</label>
+                      <label htmlFor="contact-email" className="sr-only">{t.contact.emailPlaceholder}</label>
                       <input
                         id="contact-email"
                         type="email"
-                        placeholder="Email"
+                        placeholder={t.contact.emailPlaceholder}
                         required
                         value={formState.email}
                         onChange={(e) => setFormState(s => ({ ...s, email: e.target.value }))}
@@ -115,10 +124,10 @@ export default function ContactSignal() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="contact-message" className="sr-only">Mensaje</label>
+                      <label htmlFor="contact-message" className="sr-only">{t.contact.messagePlaceholder}</label>
                       <textarea
                         id="contact-message"
-                        placeholder="Cuéntame tu propuesta"
+                        placeholder={t.contact.messagePlaceholder}
                         rows={4}
                         required
                         value={formState.message}
@@ -132,9 +141,19 @@ export default function ContactSignal() {
                     type="submit"
                     className="mt-12 group flex items-center gap-3 text-lg font-display font-semibold text-quartz hover:text-cobalt transition-colors focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md px-2 py-1"
                   >
-                    Enviar Señal
+                    {t.contact.send}
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
+
+                  <div className="mt-10 pt-8 border-t border-quartz/10 flex flex-col items-center gap-6">
+                    <p className="text-sm text-quartz/30 font-body text-center">
+                      {t.contact.orEmail}{" "}
+                      <a href="mailto:enrilaforet@gmail.com" className="text-cobalt hover:underline">
+                        enrilaforet@gmail.com
+                      </a>
+                    </p>
+                    <SocialIcons />
+                  </div>
                 </motion.form>
               )}
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MousePointerClick, ChevronDown } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function getScreenPositions(count) {
   return Array.from({ length: count }, (_, i) => 0.12 + (i / count) * 0.72);
@@ -48,6 +49,7 @@ function remapProgress(progress, stops) {
 
 export default function ScrollOverlay({ projects }) {
   const [progress, setProgress] = useState(0);
+  const { t } = useLanguage();
   const { stops, screenTs } = useMemo(
     () => buildScrollRemap(projects.length),
     [projects.length]
@@ -89,7 +91,6 @@ export default function ScrollOverlay({ projects }) {
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10">
-      {/* Hero text */}
       <AnimatePresence>
         {showHero && (
           <motion.div
@@ -100,23 +101,23 @@ export default function ScrollOverlay({ projects }) {
             className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
           >
             <p className="text-xs md:text-sm tracking-widest uppercase text-quartz/40 mb-4 font-body">
-              Enri La Forêt · 2026
+              {t.hero.tagline}
             </p>
             <h1
               className="font-display font-bold text-quartz leading-none"
               style={{ fontSize: "clamp(1.5rem, 8vw, 5rem)" }}
             >
-              Espacio
+              {t.hero.title1}
               <br />
-              <span className="text-cobalt">Premeditadamente</span>
+              <span className="text-cobalt">{t.hero.title2}</span>
               <br />
-              Vacío
+              {t.hero.title3}
             </h1>
             <p
               className="mt-4 md:mt-6 text-sm md:text-lg text-quartz/40 font-body font-light max-w-xs md:max-w-xl px-4"
               style={{ lineHeight: 1.6 }}
             >
-              Primer álbum · Live/AV · Techno industrial, ambient, voces corales y poesía.
+              {t.hero.subtitle}
             </p>
             <motion.div
               animate={{ y: [0, 8, 0] }}
@@ -124,7 +125,7 @@ export default function ScrollOverlay({ projects }) {
               className="absolute bottom-12 flex flex-col items-center gap-2"
             >
               <span className="text-[10px] md:text-xs tracking-widest uppercase text-quartz/30 font-body">
-                Scroll para explorar
+                {t.hero.scroll}
               </span>
               <ChevronDown className="w-4 h-4 text-quartz/30" />
             </motion.div>
@@ -132,7 +133,6 @@ export default function ScrollOverlay({ projects }) {
         )}
       </AnimatePresence>
 
-      {/* Project title near each screen */}
       <AnimatePresence>
         {activeProject && (
           <motion.div
@@ -154,13 +154,12 @@ export default function ScrollOverlay({ projects }) {
             </h2>
             <div className="mt-3 flex items-center justify-center gap-2 text-xs md:text-sm text-quartz/30 font-body">
               <MousePointerClick className="w-4 h-4" />
-              <span>Click para explorar</span>
+              <span>{t.hero.click}</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* End text */}
       <AnimatePresence>
         {showEnd && (
           <motion.div
@@ -171,7 +170,7 @@ export default function ScrollOverlay({ projects }) {
             className="absolute inset-0 flex items-center justify-center text-center"
           >
             <div className="flex flex-col items-center gap-3">
-              <p className="text-xs tracking-widest uppercase text-quartz/40 font-body">Continuar</p>
+              <p className="text-xs tracking-widest uppercase text-quartz/40 font-body">{t.hero.continue}</p>
               <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
                 <ChevronDown className="w-6 h-6 text-quartz/40" />
               </motion.div>

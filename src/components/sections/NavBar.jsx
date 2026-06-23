@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Instagram } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import MagneticButton from "@/components/ui/MagneticButton";
-import BandcampIcon from "@/components/ui/BandcampIcon";
+import LanguageToggle from "@/components/ui/LanguageToggle";
+import SocialIcons from "@/components/ui/SocialIcons";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -15,11 +18,17 @@ export default function NavBar() {
   }, []);
 
   const links = [
-    { label: "Obra", href: "#scroll-experience" },
-    { label: "About", href: "#about" },
-    { label: "Contacto", href: "#contact" },
-    { label: "Bandcamp", href: "https://enrilaforet.bandcamp.com/album/espacio-premeditadamente-vac-o" },
+    { label: t.nav.obra, href: "#scroll-experience" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.contact, href: "#contact", isContact: true },
+    { label: t.nav.bandcamp, href: "https://enrilaforet.bandcamp.com/album/espacio-premeditadamente-vac-o" },
   ];
+
+  const handleContactClick = (e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent("open-contact"));
+    setMenuOpen(false);
+  };
 
   return (
     <>
@@ -36,25 +45,30 @@ export default function NavBar() {
             Enri La Forêt
           </a>
 
-          <div className="hidden md:flex items-center gap-10">
-            {links.map(link => (
+          <div className="hidden md:flex items-center gap-8">
+            {links.map((link) => (
               <a
-                key={link.href}
+                key={link.label}
                 href={link.href}
+                onClick={(e) => link.isContact && handleContactClick(e)}
                 className="text-sm text-quartz/50 hover:text-quartz transition-colors font-body tracking-wide"
               >
                 {link.label}
               </a>
             ))}
+            <LanguageToggle />
           </div>
 
-          <button
-            className="md:hidden w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md"
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="w-5 h-5 text-quartz" />
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            <LanguageToggle />
+            <button
+              className="w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-cobalt rounded-md"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5 text-quartz" />
+            </button>
+          </div>
         </div>
       </motion.nav>
 
@@ -79,9 +93,15 @@ export default function NavBar() {
             <div className="flex flex-col items-center gap-8">
               {links.map((link, i) => (
                 <motion.a
-                  key={link.href}
+                  key={link.label}
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => {
+                    if (link.isContact) {
+                      handleContactClick(e);
+                    } else {
+                      setMenuOpen(false);
+                    }
+                  }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.08 }}
@@ -96,26 +116,8 @@ export default function NavBar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex items-center gap-6 mt-8"
             >
-              <a
-                href="https://www.instagram.com/enrilaforet/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-11 h-11 rounded-full border border-quartz/15 flex items-center justify-center text-quartz/50 hover:text-cobalt hover:border-cobalt/40 transition-all"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="https://enrilaforet.bandcamp.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Bandcamp"
-                className="w-11 h-11 rounded-full border border-quartz/15 flex items-center justify-center text-quartz/50 hover:text-cobalt hover:border-cobalt/40 transition-all"
-              >
-                <BandcampIcon className="w-5 h-5" />
-              </a>
+              <SocialIcons className="mt-10" />
             </motion.div>
           </motion.div>
         )}
