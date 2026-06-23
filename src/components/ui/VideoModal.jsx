@@ -13,7 +13,7 @@ export default function VideoModal({ project, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.4 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
         style={{ background: "rgba(10, 10, 11, 0.96)" }}
         onClick={onClose}
       >
@@ -39,7 +39,7 @@ export default function VideoModal({ project, onClose }) {
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.92, opacity: 0, y: 20 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-5xl"
+          className="relative w-full max-w-5xl my-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Video or Ken Burns image */}
