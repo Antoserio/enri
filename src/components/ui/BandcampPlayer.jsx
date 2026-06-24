@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Music, X, Play, Pause, SkipForward, SkipBack } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 // Default: EPV album
 const EPV = {
-  title:  "Espacio Premeditadamente Vacío",
+  title:  "Espacio Premeditadamente VacÃ­o",
   image:  "/EPV_Portada-01.jpg",
-  credit: "Enri La Forêt · 2026 · Pinorama Records",
+  credit: "Enri La ForÃªt Â· 2026 Â· Pinorama Records",
   tracks: [
-    { n: "1", title: "El muro",                    duration: "06:09", file: "/epv-1-el-muro.wav" },
-    { n: "2", title: "Bil'in",                      duration: "05:22", file: "/epv-2-bilin.wav" },
-    { n: "3", title: "¿Hasta cuándo?",             duration: "04:20", file: "/epv-3-hasta-cuando.wav" },
-    { n: "4", title: "Sumergirse en el naufragio", duration: "06:08", file: "/epv-4-sumergirse.wav" },
-    { n: "5", title: "La brecha",                   duration: "05:46", file: "/epv-5-la-brecha.wav" },
+    { n: "1", title: "El muro",                    duration: "06:09", file: "/epv-1-el-muro.mp3" },
+    { n: "2", title: "Bil'in",                      duration: "05:22", file: "/epv-2-bilin.mp3" },
+    { n: "3", title: "Â¿Hasta cuÃ¡ndo?",             duration: "04:20", file: "/epv-3-hasta-cuando.mp3" },
+    { n: "4", title: "Sumergirse en el naufragio", duration: "06:08", file: "/epv-4-sumergirse.mp3" },
+    { n: "5", title: "La brecha",                   duration: "05:46", file: "/epv-5-la-brecha.mp3" },
   ],
 };
 
@@ -119,7 +119,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
         </span>
       </motion.button>
 
-      {/* Mobile backdrop — tap outside panel to close */}
+      {/* Mobile backdrop â€” tap outside panel to close */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -157,7 +157,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
               </button>
             </div>
 
-            {/* Album art + progress — smaller on mobile */}
+            {/* Album art + progress â€” smaller on mobile */}
             <div className="relative">
               <img
                 src={album.image}
@@ -210,7 +210,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
                 >
                   <span className="w-4 text-center shrink-0">
                     {currentIdx === i && isPlaying
-                      ? <span className="text-cobalt text-[10px]">▶</span>
+                      ? <span className="text-cobalt text-[10px]">â–¶</span>
                       : <span className={`font-mono text-xs ${currentIdx === i ? "text-cobalt" : "text-quartz/30"}`}>{track.n}</span>
                     }
                   </span>
@@ -231,3 +231,4 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
     </>
   );
 }
+
