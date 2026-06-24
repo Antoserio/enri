@@ -109,7 +109,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1 }}
         onClick={toggle}
-        className="fixed bottom-8 left-8 z-40 flex items-center gap-3 px-5 h-12 rounded-full glass-panel hover:border-cobalt/40 transition-all focus:outline-none focus:ring-2 focus:ring-cobalt group"
+        className="hidden md:flex fixed bottom-8 left-8 z-40 items-center gap-3 px-5 h-12 rounded-full glass-panel hover:border-cobalt/40 transition-all focus:outline-none focus:ring-2 focus:ring-cobalt group"
         aria-label={isOpen ? t.player.close : t.player.open}
       >
         <div className={`w-2 h-2 rounded-full transition-all ${isPlaying ? "bg-cobalt animate-pulse" : "bg-quartz/30"}`} />
