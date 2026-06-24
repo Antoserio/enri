@@ -41,9 +41,11 @@ export default function MobileSlider({ projects, onProjectClick }) {
 
   const proj = projects[current];
 
+  const stopBubble = (e) => e.stopPropagation();
+
   return (
     <div
-      style={{ position: "relative", width: "100%", height: "100dvh", background: "#0A0A0B", overflow: "hidden" }}
+      style={{ position: "relative", width: "100%", height: "100dvh", background: "#0A0A0B", overflow: "hidden", touchAction: "none" }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -80,7 +82,11 @@ export default function MobileSlider({ projects, onProjectClick }) {
       )}
 
       {/* Info — bottom 80px, never cut off */}
-      <div style={{ position: "absolute", left: 0, right: 0, bottom: 80, padding: "0 24px", zIndex: 10 }}>
+      <div
+        style={{ position: "absolute", left: 0, right: 0, bottom: 80, padding: "0 24px", zIndex: 10 }}
+        onTouchStart={stopBubble}
+        onTouchEnd={stopBubble}
+      >
         <p style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#1A56DB", marginBottom: 8 }}>
           {proj.category}
         </p>
@@ -97,6 +103,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
             color: "rgba(255,255,255,0.9)", fontSize: 14,
             cursor: "pointer", minHeight: 48,
             WebkitTapHighlightColor: "transparent",
+            touchAction: "manipulation",
           }}
         >
           {proj.tracks
@@ -107,7 +114,11 @@ export default function MobileSlider({ projects, onProjectClick }) {
       </div>
 
       {/* Dots — tappable */}
-      <div style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+      <div
+        style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 10, display: "flex", flexDirection: "column", gap: 8 }}
+        onTouchStart={stopBubble}
+        onTouchEnd={stopBubble}
+      >
         {projects.map((_, i) => (
           <button
             key={i}
@@ -116,6 +127,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
               width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
               background: "none", border: "none", padding: 0, cursor: "pointer",
               WebkitTapHighlightColor: "transparent",
+              touchAction: "manipulation",
             }}
           >
             <div style={{
