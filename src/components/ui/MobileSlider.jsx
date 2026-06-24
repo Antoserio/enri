@@ -1,27 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Music, ExternalLink } from "lucide-react";
 
 export default function MobileSlider({ projects, onProjectClick }) {
-  const [current, setCurrent]     = useState(0);
-  const [scanned, setScanned]     = useState(false);
-  const [transitioning, setTrans] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [scanned, setScanned] = useState(false);
   const touchStartY = useRef(null);
   const touchStartX = useRef(null);
+  const lockRef     = useRef(false);
 
-  // Scan reveal on mount
   useEffect(() => {
-    const t = setTimeout(() => setScanned(true), 1600);
+    const t = setTimeout(() => setScanned(true), 1500);
     return () => clearTimeout(t);
   }, []);
 
   const goTo = (next) => {
-    if (transitioning) return;
+    if (lockRef.current) return;
     const clamped = Math.max(0, Math.min(projects.length - 1, next));
     if (clamped === current) return;
-    setTrans(true);
+    lockRef.current = true;
     setCurrent(clamped);
-    setTimeout(() => setTrans(false), 500);
+    setTimeout(() => { lockRef.current = false; }, 350);
   };
 
   const onTouchStart = (e) => {
@@ -33,110 +31,128 @@ export default function MobileSlider({ projects, onProjectClick }) {
     if (touchStartY.current === null) return;
     const dy = touchStartY.current - e.changedTouches[0].clientY;
     const dx = Math.abs(touchStartX.current - e.changedTouches[0].clientX);
-    if (Math.abs(dy) < 40 || dx > Math.abs(dy)) return; // too short or horizontal
-    goTo(dy > 0 ? current + 1 : current - 1);
     touchStartY.current = null;
+    if (Math.abs(dy) < 45 || dx > Math.abs(dy) * 0.8) return;
+    goTo(dy > 0 ? current + 1 : current - 1);
   };
 
   const proj = projects[current];
-  const isFirst = current === 0;
 
   return (
     <div
       className="relative w-full h-screen overflow-hidden"
-      style={{ background: "#0A0A0B" }}
+      style={{ background: "#0A0A0B", touchAction: "pan-x" }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* Image */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={proj.id}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -40 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      {/* Images — all stacked, only current visible */}
+      {projects.map((p, i) => (
+        <div
+          key={p.id}
           className="absolute inset-0"
+          style={{
+            opacity: i === current ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            pointerEvents: i === current ? "auto" : "none",
+          }}
         >
           <img
-            src={proj.image}
-            alt={proj.title}
+            src={p.image}
+            alt={p.title}
             className="w-full h-full object-cover"
             style={{
-              filter: isFirst ? "grayscale(1) brightness(0.75)" : "brightness(0.65)",
+              filter: p.id === "enri-portrait" ? "grayscale(1) brightness(0.75)" : "brightness(0.6)",
             }}
           />
-          {/* Gradient overlay */}
           <div
             className="absolute inset-0"
-            style={{ background: "linear-gradient(to bottom, rgba(10,10,11,0.2) 0%, rgba(10,10,11,0) 40%, rgba(10,10,11,0.85) 100%)" }}
+            style={{ background: "linear-gradient(to bottom, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0) 35%, rgba(10,10,11,0.9) 100%)" }}
           />
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      ))}
 
-      {/* Scan line reveal on first load */}
+      {/* Scan reveal on first load */}
       {!scanned && (
-        <motion.div
-          className="absolute inset-0 z-20 pointer-events-none"
-          style={{ background: "#0A0A0B" }}
-          initial={{ clipPath: "inset(0 0 0% 0)" }}
-          animate={{ clipPath: "inset(0 0 100% 0)" }}
-          transition={{ duration: 1.4, ease: "linear", delay: 0.1 }}
-        >
-          {/* scan line */}
-          <motion.div
-            className="absolute left-0 right-0 h-px"
-            style={{ background: "rgba(26,86,219,0.9)", boxShadow: "0 0 12px 2px rgba(26,86,219,0.6)" }}
-            initial={{ top: "0%" }}
-            animate={{ top: "100%" }}
-            transition={{ duration: 1.4, ease: "linear", delay: 0.1 }}
+        <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "#0A0A0B",
+              animation: "scanReveal 1.4s linear 0.1s forwards",
+            }}
           />
-        </motion.div>
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              height: "2px",
+              background: "rgba(26,86,219,0.9)",
+              boxShadow: "0 0 12px 3px rgba(26,86,219,0.5)",
+              animation: "scanLine 1.4s linear 0.1s forwards",
+            }}
+          />
+          <style>{`
+            @keyframes scanReveal {
+              from { clip-path: inset(0 0 0% 0); }
+              to   { clip-path: inset(0 0 100% 0); }
+            }
+            @keyframes scanLine {
+              from { top: 0%; }
+              to   { top: 100%; }
+            }
+          `}</style>
+        </div>
       )}
 
-      {/* Project info */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={proj.id + "-info"}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="absolute bottom-0 left-0 right-0 px-6 pb-10 z-10"
+      {/* Info — fades instantly */}
+      <div
+        className="absolute bottom-0 left-0 right-0 px-6 pb-10 z-10"
+        style={{ transition: "opacity 0.2s ease" }}
+      >
+        <p
+          key={proj.id + "-cat"}
+          className="text-[10px] tracking-widest uppercase font-body mb-2"
+          style={{ color: "#1A56DB" }}
         >
-          <p className="text-[10px] tracking-widest uppercase text-[#1A56DB] font-body mb-2">
-            {proj.category}
-          </p>
-          <h2
-            className="font-display font-bold text-white leading-tight mb-5"
-            style={{ fontSize: "clamp(1.4rem, 7vw, 2.2rem)" }}
-          >
-            {proj.title}
-          </h2>
+          {proj.category}
+        </p>
+        <h2
+          key={proj.id + "-title"}
+          className="font-display font-bold text-white leading-tight mb-5"
+          style={{ fontSize: "clamp(1.4rem, 7vw, 2.2rem)" }}
+        >
+          {proj.title}
+        </h2>
 
-          {/* Action button */}
-          <button
-            onClick={() => onProjectClick(proj)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 text-white/80 text-sm font-body backdrop-blur-sm active:scale-95 transition-transform"
-          >
-            {proj.tracks
-              ? <><Music className="w-3.5 h-3.5" /> <span>Escuchar</span></>
-              : <><ExternalLink className="w-3.5 h-3.5" /> <span>Ver</span></>
-            }
-          </button>
-        </motion.div>
-      </AnimatePresence>
+        <button
+          onPointerDown={() => onProjectClick(proj)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full text-white/80 text-sm font-body active:scale-95"
+          style={{
+            border: "1px solid rgba(255,255,255,0.2)",
+            touchAction: "manipulation",
+            WebkitTapHighlightColor: "transparent",
+            transition: "transform 0.1s ease",
+          }}
+        >
+          {proj.tracks
+            ? <><Music className="w-3.5 h-3.5" /><span>Escuchar</span></>
+            : <><ExternalLink className="w-3.5 h-3.5" /><span>Ver</span></>
+          }
+        </button>
+      </div>
 
       {/* Dot indicators */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
+      <div className="absolute right-4 top-1/2 z-10 flex flex-col gap-2" style={{ transform: "translateY(-50%)" }}>
         {projects.map((_, i) => (
-          <button
+          <div
             key={i}
-            onClick={() => goTo(i)}
-            className="w-1.5 rounded-full transition-all duration-300"
             style={{
+              width: "6px",
+              borderRadius: "9999px",
               height: i === current ? "20px" : "6px",
               background: i === current ? "#1A56DB" : "rgba(255,255,255,0.25)",
+              transition: "height 0.3s ease, background 0.3s ease",
             }}
           />
         ))}
