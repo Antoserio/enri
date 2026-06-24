@@ -112,7 +112,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
           {proj.title}
         </h2>
         <button
-          onClick={() => onProjectClick(proj)}
+          onPointerDown={(e) => { e.preventDefault(); onProjectClick(proj); }}
           style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             padding: "13px 24px", borderRadius: 9999,
@@ -133,7 +133,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
 
       {/* Down arrow — always visible, pulses on last project */}
       <button
-        onClick={scrollToContent}
+        onPointerDown={(e) => { e.preventDefault(); scrollToContent(); }}
         onTouchStart={stopBubble}
         onTouchEnd={stopBubble}
         style={{
@@ -159,7 +159,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
         {projects.map((_, i) => (
           <button
             key={i}
-            onClick={() => goTo(i)}
+            onPointerDown={(e) => { e.preventDefault(); goTo(i); }}
             style={{
               width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
               background: "none", border: "none", padding: 0, cursor: "pointer",
