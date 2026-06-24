@@ -103,15 +103,10 @@ export default function Home() {
   const [activeProject,   setActiveProject]   = useState(null);
   const [audioProject,    setAudioProject]     = useState(null);
   const [playerOpen,      setPlayerOpen]       = useState(false);
-  const [mobile, setMobile] = useState(() => window.innerWidth < 768);
+  const [mobile] = useState(() =>
+    window.innerWidth < 1024 && (navigator.maxTouchPoints > 0 || "ontouchstart" in window)
+  );
   const { t } = useLanguage();
-
-  // Stable mobile detection — avoids mounting/unmounting Three.js on re-renders
-  useEffect(() => {
-    const check = () => setMobile(window.innerWidth < 768);
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   // Preload all images so swipe is instant
   useEffect(() => {
