@@ -1,12 +1,10 @@
-﻿import React, { useState, useCallback } from "react";
+﻿import React, { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MousePointerClick } from "lucide-react";
 import NavBar from "@/components/sections/NavBar";
 import SpiralSlider from "@/components/three/SpiralSlider";
 import MobileSlider from "@/components/ui/MobileSlider";
 import MouseLightOverlay from "@/components/ui/MouseLightOverlay";
-
-const isMobile = () => window.innerWidth < 768;
 import VideoModal from "@/components/ui/VideoModal";
 import BandcampPlayer from "@/components/ui/BandcampPlayer";
 import AboutSection from "@/components/sections/AboutSection";
@@ -103,9 +101,22 @@ const PROJECTS = [
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeProject,   setActiveProject]   = useState(null);
-  const [audioProject,    setAudioProject]     = useState(null); // null = default EPV
+  const [audioProject,    setAudioProject]     = useState(null);
   const [playerOpen,      setPlayerOpen]       = useState(false);
+  const [mobile, setMobile] = useState(() => window.innerWidth < 768);
   const { t } = useLanguage();
+
+  // Stable mobile detection — avoids mounting/unmounting Three.js on re-renders
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Preload all images so swipe is instant
+  useEffect(() => {
+    PROJECTS.forEach(p => { const img = new Image(); img.src = p.image; });
+  }, []);
 
   const handleProjectClick = useCallback((project) => {
     if (project.tracks) {
@@ -123,7 +134,7 @@ export default function Home() {
       <NavBar />
 
       <div className="relative h-screen overflow-hidden">
-        {isMobile() ? (
+        {mobile ? (
           <MobileSlider projects={PROJECTS} onProjectClick={handleProjectClick} />
         ) : (
           <>
