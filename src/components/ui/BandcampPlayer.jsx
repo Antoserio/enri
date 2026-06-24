@@ -103,21 +103,28 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
     <>
       <audio ref={audioRef} />
 
-      {/* Floating trigger button */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1 }}
-        onClick={toggle}
-        className="hidden md:flex fixed bottom-8 left-8 z-40 items-center gap-3 px-5 h-12 rounded-full glass-panel hover:border-cobalt/40 transition-all focus:outline-none focus:ring-2 focus:ring-cobalt group"
-        aria-label={isOpen ? t.player.close : t.player.open}
-      >
-        <div className={`w-2 h-2 rounded-full transition-all ${isPlaying ? "bg-cobalt animate-pulse" : "bg-quartz/30"}`} />
-        <Music className={`w-4 h-4 transition-colors ${isOpen ? "text-cobalt" : "text-quartz/50 group-hover:text-quartz"}`} />
-        <span className="text-xs font-body text-quartz/50 group-hover:text-quartz transition-colors hidden md:block truncate max-w-[140px]">
-          {isPlaying && currentIdx !== null ? album.tracks[currentIdx].title : album.title}
-        </span>
-      </motion.button>
+      {/* Floating trigger — desktop always visible, mobile only when playing */}
+      <AnimatePresence>
+        {(isPlaying || typeof window !== "undefined" && window.innerWidth >= 768) && (
+          <motion.button
+            key="trigger"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.25 }}
+            onClick={toggle}
+            className="fixed z-40 items-center gap-3 px-5 h-12 rounded-full glass-panel hover:border-cobalt/40 transition-all focus:outline-none focus:ring-2 focus:ring-cobalt group"
+            style={{ bottom: 24, left: 24, display: "flex" }}
+            aria-label={isOpen ? t.player.close : t.player.open}
+          >
+            <div className={`w-2 h-2 rounded-full transition-all ${isPlaying ? "bg-cobalt animate-pulse" : "bg-quartz/30"}`} />
+            <Music className={`w-4 h-4 transition-colors ${isOpen ? "text-cobalt" : "text-quartz/50 group-hover:text-quartz"}`} />
+            <span className="text-xs font-body text-quartz/50 group-hover:text-quartz transition-colors hidden md:block truncate max-w-[140px]">
+              {isPlaying && currentIdx !== null ? album.tracks[currentIdx].title : album.title}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Mobile backdrop â€” tap outside panel to close */}
       <AnimatePresence>
