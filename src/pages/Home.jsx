@@ -3,7 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MousePointerClick } from "lucide-react";
 import NavBar from "@/components/sections/NavBar";
 import SpiralSlider from "@/components/three/SpiralSlider";
+import MobileSlider from "@/components/ui/MobileSlider";
 import MouseLightOverlay from "@/components/ui/MouseLightOverlay";
+
+const isMobile = () => window.innerWidth < 768;
 import VideoModal from "@/components/ui/VideoModal";
 import BandcampPlayer from "@/components/ui/BandcampPlayer";
 import AboutSection from "@/components/sections/AboutSection";
@@ -120,56 +123,62 @@ export default function Home() {
       <NavBar />
 
       <div className="relative h-screen overflow-hidden">
-        <SpiralSlider
-          projects={PROJECTS}
-          onProjectClick={handleProjectClick}
-          onActiveProject={setActiveProject}
-        />
+        {isMobile() ? (
+          <MobileSlider projects={PROJECTS} onProjectClick={handleProjectClick} />
+        ) : (
+          <>
+            <SpiralSlider
+              projects={PROJECTS}
+              onProjectClick={handleProjectClick}
+              onActiveProject={setActiveProject}
+            />
 
-        {/* Hero text */}
-        <div className="absolute top-0 left-0 right-0 flex flex-col items-center pt-20 md:pt-24 pointer-events-none z-10">
-          <p className="text-[10px] md:text-xs tracking-widest uppercase text-white/30 mb-3 font-body">
-            {t.hero.tagline}
-          </p>
-          <h1
-            className="font-display font-bold text-white leading-none text-center"
-            style={{ fontSize: "clamp(1.4rem, 5vw, 3.5rem)" }}
-          >
-            {t.hero.title1}
-            <br />
-            <span className="text-[#1A56DB]">{t.hero.title2}</span>
-            <br />
-            {t.hero.title3}
-          </h1>
-        </div>
-
-        {/* Active project info */}
-        <AnimatePresence mode="wait">
-          {activeProject && (
-            <motion.div
-              key={activeProject.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35 }}
-              className="absolute bottom-8 md:bottom-10 left-0 right-0 flex flex-col items-center pointer-events-none z-10"
-            >
-              <p className="text-[10px] md:text-xs tracking-widest uppercase text-[#1A56DB] font-body">
-                {activeProject.category}
+            {/* Hero text */}
+            <div className="absolute top-0 left-0 right-0 flex flex-col items-center pt-20 md:pt-24 pointer-events-none z-10">
+              <p className="text-[10px] md:text-xs tracking-widest uppercase text-white/30 mb-3 font-body">
+                {t.hero.tagline}
               </p>
-              <h2
-                className="font-display text-white font-light mt-1"
-                style={{ fontSize: "clamp(1rem, 3vw, 1.6rem)" }}
+              <h1
+                className="font-display font-bold text-white leading-none text-center"
+                style={{ fontSize: "clamp(1.4rem, 5vw, 3.5rem)" }}
               >
-                {activeProject.title}
-              </h2>
-              <div className="flex items-center gap-1.5 mt-2 text-white/25 text-[10px] md:text-xs font-body">
-                <MousePointerClick className="w-3 h-3" />
-                <span>{t.hero.click}</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                {t.hero.title1}
+                <br />
+                <span className="text-[#1A56DB]">{t.hero.title2}</span>
+                <br />
+                {t.hero.title3}
+              </h1>
+            </div>
+
+            {/* Active project info */}
+            <AnimatePresence mode="wait">
+              {activeProject && (
+                <motion.div
+                  key={activeProject.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35 }}
+                  className="absolute bottom-8 md:bottom-10 left-0 right-0 flex flex-col items-center pointer-events-none z-10"
+                >
+                  <p className="text-[10px] md:text-xs tracking-widest uppercase text-[#1A56DB] font-body">
+                    {activeProject.category}
+                  </p>
+                  <h2
+                    className="font-display text-white font-light mt-1"
+                    style={{ fontSize: "clamp(1rem, 3vw, 1.6rem)" }}
+                  >
+                    {activeProject.title}
+                  </h2>
+                  <div className="flex items-center gap-1.5 mt-2 text-white/25 text-[10px] md:text-xs font-body">
+                    <MousePointerClick className="w-3 h-3" />
+                    <span>{t.hero.click}</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
       </div>
 
       <MouseLightOverlay />
