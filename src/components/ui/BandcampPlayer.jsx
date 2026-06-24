@@ -114,7 +114,7 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
             transition={{ duration: 0.25 }}
             onClick={toggle}
             className="fixed z-40 items-center gap-3 px-5 h-12 rounded-full glass-panel hover:border-cobalt/40 transition-all focus:outline-none focus:ring-2 focus:ring-cobalt group"
-            style={{ bottom: 24, left: 24, display: "flex" }}
+            style={{ bottom: 24, left: 24, display: "flex", touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
             aria-label={isOpen ? t.player.close : t.player.open}
           >
             <div className={`w-2 h-2 rounded-full transition-all ${isPlaying ? "bg-cobalt animate-pulse" : "bg-quartz/30"}`} />
@@ -157,7 +157,8 @@ export default function BandcampPlayer({ audioProject, isOpen: isOpenProp, onOpe
               </div>
               <button
                 onClick={toggle}
-                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-quartz/10 active:bg-quartz/20 transition-colors text-quartz/40 hover:text-quartz shrink-0 ml-2 touch-manipulation"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-quartz/10 active:bg-quartz/20 transition-colors text-quartz/40 hover:text-quartz shrink-0 ml-2"
+              style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
                 aria-label="Cerrar reproductor"
               >
                 <X className="w-4 h-4" />

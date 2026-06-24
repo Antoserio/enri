@@ -1,16 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Music, ExternalLink } from "lucide-react";
+import { Music, ExternalLink, ChevronDown } from "lucide-react";
 
 export default function MobileSlider({ projects, onProjectClick }) {
   const [current, setCurrent] = useState(0);
   const [scanned, setScanned] = useState(false);
+  const [atEnd, setAtEnd] = useState(false);
   const swipe = useRef({ y: null, x: null, moved: false });
   const busy  = useRef(false);
+  const isLast = current === projects.length - 1;
 
   useEffect(() => {
     const t = setTimeout(() => setScanned(true), 1500);
     return () => clearTimeout(t);
   }, []);
+
+  const scrollToContent = () => {
+    window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+  };
 
   const goTo = (n) => {
     if (busy.current) return;
@@ -18,6 +24,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
     if (next === current) return;
     busy.current = true;
     setCurrent(next);
+    setAtEnd(false);
     setTimeout(() => { busy.current = false; }, 400);
   };
 
@@ -36,11 +43,22 @@ export default function MobileSlider({ projects, onProjectClick }) {
     const dx = Math.abs(swipe.current.x - e.changedTouches[0].clientX);
     swipe.current = { y: null, x: null, moved: false };
     if (Math.abs(dy) < 40 || dx > Math.abs(dy)) return;
-    goTo(dy > 0 ? current + 1 : current - 1);
+
+    if (dy > 0) {
+      // swiping up (next)
+      if (isLast) {
+        // already at last — scroll the page down
+        scrollToContent();
+      } else {
+        goTo(current + 1);
+      }
+    } else {
+      // swiping down (prev)
+      goTo(current - 1);
+    }
   };
 
   const proj = projects[current];
-
   const stopBubble = (e) => e.stopPropagation();
 
   return (
@@ -81,7 +99,7 @@ export default function MobileSlider({ projects, onProjectClick }) {
         </div>
       )}
 
-      {/* Info — bottom 80px, never cut off */}
+      {/* Info */}
       <div
         style={{ position: "absolute", left: 0, right: 0, bottom: 80, padding: "0 24px", zIndex: 10 }}
         onTouchStart={stopBubble}
@@ -113,7 +131,26 @@ export default function MobileSlider({ projects, onProjectClick }) {
         </button>
       </div>
 
-      {/* Dots — tappable */}
+      {/* Down arrow — always visible, pulses on last project */}
+      <button
+        onClick={scrollToContent}
+        onTouchStart={stopBubble}
+        onTouchEnd={stopBubble}
+        style={{
+          position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
+          zIndex: 10, background: "none", border: "none", padding: 8, cursor: "pointer",
+          WebkitTapHighlightColor: "transparent", touchAction: "manipulation",
+          opacity: isLast ? 1 : 0.35,
+          transition: "opacity 0.4s ease",
+          animation: isLast ? "arrowBounce 1.4s ease-in-out infinite" : "none",
+        }}
+        aria-label="Explorar más"
+      >
+        <ChevronDown style={{ width: 22, height: 22, color: "#fff" }} />
+        <style>{`@keyframes arrowBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}`}</style>
+      </button>
+
+      {/* Dots */}
       <div
         style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 10, display: "flex", flexDirection: "column", gap: 8 }}
         onTouchStart={stopBubble}
