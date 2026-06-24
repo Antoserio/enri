@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, ArrowRight } from "lucide-react";
+import { X, Send, ArrowRight, ArrowLeft } from "lucide-react";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SocialIcons from "@/components/ui/SocialIcons";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -9,7 +9,7 @@ export default function ContactSignal() {
   const [isOpen, setIsOpen] = useState(false);
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
-  const { t } = useLanguage();
+  const { t, lang, toggle } = useLanguage();
 
   useEffect(() => {
     const openContact = () => setIsOpen(true);
@@ -64,8 +64,29 @@ export default function ContactSignal() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="absolute top-6 right-6 md:top-10 md:right-10"
+              className="absolute top-6 left-6 md:top-10 md:left-10 flex items-center gap-3"
             >
+              <button
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 text-quartz/50 hover:text-quartz transition-colors text-sm font-body focus:outline-none"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>{lang === "es" ? "Volver" : "Back"}</span>
+              </button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="absolute top-6 right-6 md:top-10 md:right-10 flex items-center gap-3"
+            >
+              <button
+                onClick={toggle}
+                className="text-xs font-body tracking-widest text-quartz/40 hover:text-quartz transition-colors focus:outline-none border border-quartz/10 hover:border-quartz/30 px-3 py-1.5 rounded-full"
+              >
+                {lang === "es" ? "EN" : "ES"}
+              </button>
               <MagneticButton
                 onClick={() => setIsOpen(false)}
                 className="w-12 h-12 rounded-full border border-quartz/10 flex items-center justify-center hover:bg-quartz hover:text-obsidian transition-all text-quartz focus:outline-none focus:ring-2 focus:ring-cobalt"
@@ -156,8 +177,8 @@ export default function ContactSignal() {
                   <div className="mt-10 pt-8 border-t border-quartz/10 flex flex-col items-center gap-6">
                     <p className="text-sm text-quartz/30 font-body text-center">
                       {t.contact.orEmail}{" "}
-                      <a href="mailto:enriqueflute@gmail.com" className="text-cobalt hover:underline">
-                        enriqueflute@gmail.com
+                      <a href="mailto:enrilaforet@gmail.com" className="text-cobalt hover:underline">
+                        enrilaforet@gmail.com
                       </a>
                     </p>
                     <SocialIcons />

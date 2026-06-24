@@ -22,6 +22,14 @@ const PROJECTS = [
     image: "/enri-2.jpg",
   },
   {
+    id: "enri-live",
+    title: "Enri Live",
+    category: "Live · Performance",
+    description: "Enri La Forêt en directo.",
+    year: "2026",
+    image: "/enri-live.jpg",
+  },
+  {
     id: "album-epv",
     title: "Espacio Premeditadamente Vacío",
     category: "LP · Live/AV · 2026",
