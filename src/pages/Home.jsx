@@ -99,7 +99,7 @@ export default function Home() {
   const handleProjectClick = useCallback((project) => {
     if (project.tracks) {
       // Has audio â€" open player (EPV is default, others load their tracks)
-      if (project.id !== "album-epv") setAudioProject(project);
+      setAudioProject(project.id !== "album-epv" ? project : null);
       setPlayerOpen(true);
     } else {
       // No audio â€" show image modal
