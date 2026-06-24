@@ -45,22 +45,21 @@ export default function MouseLightOverlay() {
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Gentle fade — eraser trail
+      const idleMs = performance.now() - lastMoveTime;
+      const isIdle = idleMs > IDLE_FADE_DELAY;
+
+      // When idle, erase fast (~1 sec to clear); when moving, gentle trail
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
+      ctx.fillStyle = isIdle ? "rgba(0,0,0,0.07)" : "rgba(0,0,0,0.02)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.globalCompositeOperation = "lighter";
 
-      // Only draw spotlight while mouse is active — fades out after idle
-      const idleMs = performance.now() - lastMoveTime;
-      if (idleMs < IDLE_FADE_DELAY + 600) {
-        const opacity = idleMs < IDLE_FADE_DELAY
-          ? 1
-          : 1 - (idleMs - IDLE_FADE_DELAY) / 600;
+      // Stop drawing spotlight when idle — let the fast erase clean it up
+      if (!isIdle) {
         const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 90);
-        gradient.addColorStop(0, `rgba(180, 180, 255, ${0.06 * opacity})`);
-        gradient.addColorStop(0.4, `rgba(120, 120, 255, ${0.02 * opacity})`);
+        gradient.addColorStop(0, "rgba(180, 180, 255, 0.06)");
+        gradient.addColorStop(0.4, "rgba(120, 120, 255, 0.02)");
         gradient.addColorStop(1, "rgba(77, 77, 255, 0)");
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
