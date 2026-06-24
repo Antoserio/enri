@@ -4,34 +4,38 @@ import { Music, ExternalLink } from "lucide-react";
 export default function MobileSlider({ projects, onProjectClick }) {
   const [current, setCurrent] = useState(0);
   const [scanned, setScanned] = useState(false);
-  const touchStartY = useRef(null);
-  const touchStartX = useRef(null);
-  const lockRef     = useRef(false);
+  const swipe = useRef({ y: null, x: null, moved: false });
+  const busy  = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => setScanned(true), 1500);
     return () => clearTimeout(t);
   }, []);
 
-  const goTo = (next) => {
-    if (lockRef.current) return;
-    const clamped = Math.max(0, Math.min(projects.length - 1, next));
-    if (clamped === current) return;
-    lockRef.current = true;
-    setCurrent(clamped);
-    setTimeout(() => { lockRef.current = false; }, 350);
+  const goTo = (n) => {
+    if (busy.current) return;
+    const next = Math.max(0, Math.min(projects.length - 1, n));
+    if (next === current) return;
+    busy.current = true;
+    setCurrent(next);
+    setTimeout(() => { busy.current = false; }, 400);
   };
 
-  const onSwipeStart = (e) => {
-    touchStartY.current = e.touches[0].clientY;
-    touchStartX.current = e.touches[0].clientX;
+  const handleTouchStart = (e) => {
+    swipe.current = { y: e.touches[0].clientY, x: e.touches[0].clientX, moved: false };
   };
-  const onSwipeEnd = (e) => {
-    if (touchStartY.current === null) return;
-    const dy = touchStartY.current - e.changedTouches[0].clientY;
-    const dx = Math.abs(touchStartX.current - e.changedTouches[0].clientX);
-    touchStartY.current = null;
-    if (Math.abs(dy) < 50 || dx > Math.abs(dy) * 0.7) return;
+  const handleTouchMove = (e) => {
+    if (!swipe.current.y) return;
+    const dy = Math.abs(e.touches[0].clientY - swipe.current.y);
+    const dx = Math.abs(e.touches[0].clientX - swipe.current.x);
+    if (dy > 10 || dx > 10) swipe.current.moved = true;
+  };
+  const handleTouchEnd = (e) => {
+    if (!swipe.current.y || !swipe.current.moved) { swipe.current = { y: null, x: null, moved: false }; return; }
+    const dy = swipe.current.y - e.changedTouches[0].clientY;
+    const dx = Math.abs(swipe.current.x - e.changedTouches[0].clientX);
+    swipe.current = { y: null, x: null, moved: false };
+    if (Math.abs(dy) < 40 || dx > Math.abs(dy)) return;
     goTo(dy > 0 ? current + 1 : current - 1);
   };
 
@@ -40,15 +44,16 @@ export default function MobileSlider({ projects, onProjectClick }) {
   return (
     <div
       style={{ position: "relative", width: "100%", height: "100dvh", background: "#0A0A0B", overflow: "hidden" }}
-      onTouchStart={onSwipeStart}
-      onTouchEnd={onSwipeEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Images */}
       {projects.map((p, i) => (
         <div key={p.id} style={{
           position: "absolute", inset: 0,
           opacity: i === current ? 1 : 0,
-          transition: "opacity 0.35s ease",
+          transition: "opacity 0.3s ease",
           pointerEvents: "none",
         }}>
           <img src={p.image} alt={p.title} style={{
@@ -57,74 +62,69 @@ export default function MobileSlider({ projects, onProjectClick }) {
           }} />
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to bottom, rgba(10,10,11,0.05) 0%, rgba(10,10,11,0) 25%, rgba(10,10,11,0.95) 75%, rgba(10,10,11,1) 100%)",
+            background: "linear-gradient(to bottom, transparent 40%, rgba(10,10,11,0.97) 90%)",
           }} />
         </div>
       ))}
 
       {/* Scan reveal */}
       {!scanned && (
-        <div style={{ position: "absolute", inset: 0, zIndex: 20, pointerEvents: "none", overflow: "hidden" }}>
-          <div style={{
-            position: "absolute", inset: 0, background: "#0A0A0B",
-            animation: "scanReveal 1.4s linear 0.1s forwards",
-          }} />
-          <div style={{
-            position: "absolute", left: 0, right: 0, height: "2px",
-            background: "rgba(26,86,219,0.9)",
-            boxShadow: "0 0 14px 4px rgba(26,86,219,0.5)",
-            animation: "scanLine 1.4s linear 0.1s forwards",
-          }} />
+        <div style={{ position: "absolute", inset: 0, zIndex: 20, pointerEvents: "none" }}>
+          <div style={{ position: "absolute", inset: 0, background: "#0A0A0B", animation: "scanReveal 1.4s linear 0.1s forwards" }} />
+          <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "#1A56DB", boxShadow: "0 0 12px 4px rgba(26,86,219,0.6)", animation: "scanLine 1.4s linear 0.1s forwards" }} />
           <style>{`
-            @keyframes scanReveal { from{clip-path:inset(0 0 0% 0)} to{clip-path:inset(0 0 100% 0)} }
-            @keyframes scanLine   { from{top:0%} to{top:100%} }
+            @keyframes scanReveal{from{clip-path:inset(0 0 0% 0)}to{clip-path:inset(0 0 100% 0)}}
+            @keyframes scanLine{from{top:0%}to{top:100%}}
           `}</style>
         </div>
       )}
 
-      {/* Info — fixed 30% from bottom, NOT touching the edge */}
-      <div
-        style={{ position: "absolute", left: 0, right: 0, bottom: "22%", padding: "0 28px", zIndex: 10 }}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
-      >
-        <p style={{ fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#1A56DB", fontFamily: "inherit", marginBottom: "10px" }}>
+      {/* Info — bottom 80px, never cut off */}
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 80, padding: "0 24px", zIndex: 10 }}>
+        <p style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#1A56DB", marginBottom: 8 }}>
           {proj.category}
         </p>
-        <h2 style={{ fontSize: "clamp(1.3rem, 6.5vw, 2rem)", fontWeight: 700, color: "#fff", lineHeight: 1.2, marginBottom: "24px" }}>
+        <h2 style={{ fontSize: "clamp(1.2rem, 6vw, 1.8rem)", fontWeight: 700, color: "#fff", lineHeight: 1.25, marginBottom: 20 }}>
           {proj.title}
         </h2>
         <button
-          onClick={(e) => { e.stopPropagation(); onProjectClick(proj); }}
+          onClick={() => onProjectClick(proj)}
           style={{
-            display: "inline-flex", alignItems: "center", gap: "8px",
-            padding: "14px 28px", borderRadius: "9999px",
+            display: "inline-flex", alignItems: "center", gap: 8,
+            padding: "13px 24px", borderRadius: 9999,
             border: "1px solid rgba(255,255,255,0.3)",
-            background: "rgba(10,10,11,0.6)",
-            backdropFilter: "blur(12px)",
-            color: "rgba(255,255,255,0.9)", fontSize: "14px",
+            background: "rgba(0,0,0,0.5)",
+            color: "rgba(255,255,255,0.9)", fontSize: 14,
+            cursor: "pointer", minHeight: 48,
             WebkitTapHighlightColor: "transparent",
-            touchAction: "manipulation",
-            cursor: "pointer",
-            minWidth: "130px", minHeight: "52px",
           }}
         >
           {proj.tracks
-            ? <><Music style={{ width: 16, height: 16, flexShrink: 0 }} /><span>Escuchar</span></>
-            : <><ExternalLink style={{ width: 16, height: 16, flexShrink: 0 }} /><span>Ver</span></>
+            ? <><Music style={{ width: 15, height: 15 }} /><span>Escuchar</span></>
+            : <><ExternalLink style={{ width: 15, height: 15 }} /><span>Ver</span></>
           }
         </button>
       </div>
 
-      {/* Dots */}
-      <div style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", zIndex: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+      {/* Dots — tappable */}
+      <div style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", zIndex: 10, display: "flex", flexDirection: "column", gap: 8 }}>
         {projects.map((_, i) => (
-          <div key={i} style={{
-            width: 5, borderRadius: 9999,
-            height: i === current ? 22 : 5,
-            background: i === current ? "#1A56DB" : "rgba(255,255,255,0.2)",
-            transition: "all 0.3s ease",
-          }} />
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            style={{
+              width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
+              background: "none", border: "none", padding: 0, cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+            }}
+          >
+            <div style={{
+              width: 5, borderRadius: 9999,
+              height: i === current ? 20 : 5,
+              background: i === current ? "#1A56DB" : "rgba(255,255,255,0.2)",
+              transition: "all 0.3s ease",
+            }} />
+          </button>
         ))}
       </div>
     </div>
