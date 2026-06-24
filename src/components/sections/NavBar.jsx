@@ -18,7 +18,7 @@ export default function NavBar() {
   }, []);
 
   const links = [
-    { label: t.nav.obra, href: "#scroll-experience" },
+    { label: t.nav.obra, href: "#", isTop: true },
     { label: t.nav.about, href: "#about" },
     { label: t.nav.eventos, href: "#eventos" },
     { label: t.nav.contact, href: "#contact", isContact: true },
@@ -28,6 +28,12 @@ export default function NavBar() {
   const handleContactClick = (e) => {
     e.preventDefault();
     window.dispatchEvent(new CustomEvent("open-contact"));
+    setMenuOpen(false);
+  };
+
+  const handleTopClick = (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setMenuOpen(false);
   };
 
@@ -51,7 +57,10 @@ export default function NavBar() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => link.isContact && handleContactClick(e)}
+                onClick={(e) => {
+                  if (link.isContact) handleContactClick(e);
+                  else if (link.isTop) handleTopClick(e);
+                }}
                 className="text-sm text-quartz/50 hover:text-quartz transition-colors font-body tracking-wide"
               >
                 {link.label}
@@ -97,11 +106,9 @@ export default function NavBar() {
                   key={link.label}
                   href={link.href}
                   onClick={(e) => {
-                    if (link.isContact) {
-                      handleContactClick(e);
-                    } else {
-                      setMenuOpen(false);
-                    }
+                    if (link.isContact) handleContactClick(e);
+                    else if (link.isTop) handleTopClick(e);
+                    else setMenuOpen(false);
                   }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

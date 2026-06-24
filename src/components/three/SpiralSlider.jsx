@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 
 // ─── Helix & card constants ───────────────────────────────────────────────────
-const R        = 5.0;
+const R        = 5.8;
 const PITCH    = 0.78;
 const CARD_W   = 2.4;
 const CARD_H   = 1.35;
