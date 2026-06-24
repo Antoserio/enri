@@ -17,6 +17,8 @@ export default function MouseLightOverlay() {
     let prevY = mouseY;
     const particles = [];
     let animId;
+    let lastMoveTime = 0;
+    const IDLE_FADE_DELAY = 800; // ms before spotlight starts fading out
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -28,6 +30,7 @@ export default function MouseLightOverlay() {
     const onMouseMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      lastMoveTime = performance.now();
     };
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("touchmove", (e) => {
@@ -49,13 +52,19 @@ export default function MouseLightOverlay() {
 
       ctx.globalCompositeOperation = "lighter";
 
-      // Small, soft spotlight
-      const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 90);
-      gradient.addColorStop(0, "rgba(180, 180, 255, 0.06)");
-      gradient.addColorStop(0.4, "rgba(120, 120, 255, 0.02)");
-      gradient.addColorStop(1, "rgba(77, 77, 255, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Only draw spotlight while mouse is active — fades out after idle
+      const idleMs = performance.now() - lastMoveTime;
+      if (idleMs < IDLE_FADE_DELAY + 600) {
+        const opacity = idleMs < IDLE_FADE_DELAY
+          ? 1
+          : 1 - (idleMs - IDLE_FADE_DELAY) / 600;
+        const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 90);
+        gradient.addColorStop(0, `rgba(180, 180, 255, ${0.06 * opacity})`);
+        gradient.addColorStop(0.4, `rgba(120, 120, 255, ${0.02 * opacity})`);
+        gradient.addColorStop(1, "rgba(77, 77, 255, 0)");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
       if (!reducedMotion) {
         const dx = mouseX - prevX;
