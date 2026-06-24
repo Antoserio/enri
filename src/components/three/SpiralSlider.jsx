@@ -114,12 +114,9 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
       geos.push(geo);
       origPos.push(new Float32Array(geo.attributes.position.array));
 
-      const mat = new THREE.MeshStandardMaterial({
-        map: getTexture(proj.image),
-        roughness: 0.3, metalness: 0.05,
-        transparent: true, opacity: 1,
-        side: THREE.DoubleSide,
-      });
+      const mat = mob
+        ? new THREE.MeshBasicMaterial({ map: getTexture(proj.image), transparent: true, opacity: 1, side: THREE.DoubleSide })
+        : new THREE.MeshStandardMaterial({ map: getTexture(proj.image), roughness: 0.3, metalness: 0.05, transparent: true, opacity: 1, side: THREE.DoubleSide });
 
       const mesh = new THREE.Mesh(geo, mat);
       mesh.userData.project = proj;
@@ -207,9 +204,14 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     // ── RAF loop ──────────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
     let rafId;
+    let lastFrame = 0;
+    const fpsLimit = mob ? 30 : 60;
+    const fpsInterval = 1000 / fpsLimit;
 
-    const animate = () => {
+    const animate = (timestamp) => {
       rafId = requestAnimationFrame(animate);
+      if (timestamp - lastFrame < fpsInterval) return;
+      lastFrame = timestamp;
       const dt      = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
