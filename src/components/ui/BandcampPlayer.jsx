@@ -5,13 +5,13 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 // Default: EPV album
 const EPV = {
-  title:  "Espacio Premeditadamente VacÃ­o",
+  title:  "Espacio Premeditadamente Vacío",
   image:  "/EPV_Portada-01.jpg",
-  credit: "Enri La ForÃªt Â· 2026 Â· Pinorama Records",
+  credit: "Enri La Forêt · 2026 · Pinorama Records",
   tracks: [
     { n: "1", title: "El muro",                    duration: "06:09", file: "/epv-1-el-muro.mp3" },
     { n: "2", title: "Bil'in",                      duration: "05:22", file: "/epv-2-bilin.mp3" },
-    { n: "3", title: "Â¿Hasta cuÃ¡ndo?",             duration: "04:20", file: "/epv-3-hasta-cuando.mp3" },
+    { n: "3", title: "¿Hasta cuándo?",             duration: "04:20", file: "/epv-3-hasta-cuando.mp3" },
     { n: "4", title: "Sumergirse en el naufragio", duration: "06:08", file: "/epv-4-sumergirse.mp3" },
     { n: "5", title: "La brecha",                   duration: "05:46", file: "/epv-5-la-brecha.mp3" },
   ],
