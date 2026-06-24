@@ -237,8 +237,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         mesh.up.set(0, 1, 0);          // reset to world-up (no tilt)
         mesh.lookAt(0, y, 0);          // face outward from helix axis
 
-        // Vertex bending (physical curve as card rounds the spiral)
-        applyBend(geos[i], origPos[i], normAngle);
+        // Vertex bending — skip on mobile (too expensive per frame)
+        if (!mob) applyBend(geos[i], origPos[i], normAngle);
 
         // Smooth fade zone — no hard pop: full opacity 0→90°, fades to 0 by 130°, wrap at 180° invisible
         const absNorm = Math.abs(normAngle);
