@@ -20,7 +20,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     const mount = mountRef.current;
     if (!mount) return;
     const N     = projects.length;
-    const TOTAL = N * REPEAT;   // total card slots in helix (15 for 5 projects)
+    const TOTAL = N * (mob ? 1 : REPEAT); // mobile: one pass only (fewer cards = less GPU)
 
     // ── Renderer ─────────────────────────────────────────────────────────────
     const mob = window.innerWidth < 768;
@@ -108,7 +108,7 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
     for (let i = 0; i < TOTAL; i++) {
       const proj = projects[i % N];  // repeat projects cyclically
 
-      const geo = new THREE.PlaneGeometry(CARD_W, CARD_H, SEGS_W, SEGS_H);
+      const geo = new THREE.PlaneGeometry(CARD_W, CARD_H, mob ? 4 : SEGS_W, mob ? 2 : SEGS_H);
       geos.push(geo);
       origPos.push(new Float32Array(geo.attributes.position.array));
 
@@ -237,8 +237,8 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
         mesh.up.set(0, 1, 0);          // reset to world-up (no tilt)
         mesh.lookAt(0, y, 0);          // face outward from helix axis
 
-        // Vertex bending (physical curve as card rounds the spiral)
-        applyBend(geos[i], origPos[i], normAngle);
+        // Vertex bending — skip on mobile for performance
+        if (!mob) applyBend(geos[i], origPos[i], normAngle);
 
         // Smooth fade zone — no hard pop: full opacity 0→90°, fades to 0 by 130°, wrap at 180° invisible
         const absNorm = Math.abs(normAngle);
