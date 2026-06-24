@@ -70,12 +70,14 @@ export default function SpiralSlider({ projects, onProjectClick, onActiveProject
 
     // ── Icosahedron sphere ────────────────────────────────────────────────────
     const sphGeo = new THREE.IcosahedronGeometry(1.35, 1);
-    const sphMat = new THREE.MeshPhysicalMaterial({
-      color: BLUE, metalness: 0.05, roughness: 0.04,
-      transmission: 0.93, thickness: 1.5, ior: 2.4,
-      clearcoat: 1, clearcoatRoughness: 0.08,
-      transparent: true, opacity: 0.88,
-    });
+    const sphMat = mob
+      ? new THREE.MeshBasicMaterial({ color: BLUE, transparent: true, opacity: 0.18, wireframe: false })
+      : new THREE.MeshPhysicalMaterial({
+          color: BLUE, metalness: 0.05, roughness: 0.04,
+          transmission: 0.93, thickness: 1.5, ior: 2.4,
+          clearcoat: 1, clearcoatRoughness: 0.08,
+          transparent: true, opacity: 0.88,
+        });
     const sphere = new THREE.Mesh(sphGeo, sphMat);
     scene.add(sphere);
 
