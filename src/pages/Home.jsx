@@ -14,77 +14,77 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const PROJECTS = [
   {
-    id: “enri-portrait”,
-    title: “Enri La Forêt”,
-    category: “Compositor · Artista sonoro”,
-    description: “Compositor, instrumentista y artista sonoro. Trabaja en la intersección entre el sonido, la imagen y el cuerpo.”,
-    year: “2026”,
-    image: “/enri-2.jpg”,
+    id: "enri-portrait",
+    title: "Enri La Forêt",
+    category: "Compositor · Artista sonoro",
+    description: "Compositor, instrumentista y artista sonoro. Trabaja en la intersección entre el sonido, la imagen y el cuerpo.",
+    year: "2026",
+    image: "/enri-2.jpg",
   },
   {
-    id: “album-epv”,
-    title: “Espacio Premeditadamente Vacío”,
-    category: “LP · Live/AV · 2026”,
-    description: “Primer álbum en solitario. Un proyecto dual integrado por un Live/AV y un LP publicado en marzo de 2026 en digital y en vinilo con el sello Pinorama Records. La arquitectura sonora transiciona desde beats de techno industrial hasta armonías luminosas y texturas ambientales.”,
-    year: “2026”,
-    image: “/EPV_Portada-01.jpg”,
+    id: "album-epv",
+    title: "Espacio Premeditadamente Vacío",
+    category: "LP · Live/AV · 2026",
+    description: "Primer álbum en solitario. Un proyecto dual integrado por un Live/AV y un LP publicado en marzo de 2026 en digital y en vinilo con el sello Pinorama Records. La arquitectura sonora transiciona desde beats de techno industrial hasta armonías luminosas y texturas ambientales.",
+    year: "2026",
+    image: "/EPV_Portada-01.jpg",
     tracks: [
-      { n: “1”, title: “El muro”,                    duration: “06:09”, file: “/epv-1-el-muro.mp3” },
-      { n: “2”, title: “Bil'in”,                      duration: “05:22”, file: “/epv-2-bilin.mp3” },
-      { n: “3”, title: “¿Hasta cuándo?”,             duration: “04:20”, file: “/epv-3-hasta-cuando.mp3” },
-      { n: “4”, title: “Sumergirse en el naufragio”, duration: “06:08”, file: “/epv-4-sumergirse.mp3” },
-      { n: “5”, title: “La brecha”,                   duration: “05:46”, file: “/epv-5-la-brecha.mp3” },
+      { n: "1", title: "El muro",                    duration: "06:09", file: "/epv-1-el-muro.mp3" },
+      { n: "2", title: "Bil'in",                      duration: "05:22", file: "/epv-2-bilin.mp3" },
+      { n: "3", title: "¿Hasta cuándo?",             duration: "04:20", file: "/epv-3-hasta-cuando.mp3" },
+      { n: "4", title: "Sumergirse en el naufragio", duration: "06:08", file: "/epv-4-sumergirse.mp3" },
+      { n: "5", title: "La brecha",                   duration: "05:46", file: "/epv-5-la-brecha.mp3" },
     ],
   },
   {
-    id: “esta-linea”,
-    title: “Esta línea es un espacio recíproco de intercambio”,
-    category: “Performance · Archivo · 2023”,
-    description: “Performance y archivo creado con Helena Mariño. Toma su nombre de un fragmento de Permanente obra negra de Vivian Abenshushan. La cocina como espacio discursivo y de resistencia femenina durante el franquismo.”,
-    year: “2023”,
-    image: “/portada-elinea.png”,
-    link: “https://estalinea.es/”,
+    id: "esta-linea",
+    title: "Esta línea es un espacio recíproco de intercambio",
+    category: "Performance · Archivo · 2023",
+    description: "Performance y archivo creado con Helena Mariño. Toma su nombre de un fragmento de Permanente obra negra de Vivian Abenshushan. La cocina como espacio discursivo y de resistencia femenina durante el franquismo.",
+    year: "2023",
+    image: "/portada-elinea.png",
+    link: "https://estalinea.es/",
     tracks: [
-      { n: “1”, title: “Dpto. de jardinería”,                          file: “/elinea-1-jardineria.mp3” },
-      { n: “2”, title: “Dpto. de colchones, almohadas, camas y sueños”, file: “/elinea-2-colchones.mp3” },
-      { n: “3”, title: “Dpto. de viajes”,                              file: “/elinea-3-viajes.mp3” },
-      { n: “4”, title: “Dpto. de artefactos analógicos”,               file: “/elinea-4-artefactos.mp3” },
+      { n: "1", title: "Dpto. de jardinería",                          file: "/elinea-1-jardineria.mp3" },
+      { n: "2", title: "Dpto. de colchones, almohadas, camas y sueños", file: "/elinea-2-colchones.mp3" },
+      { n: "3", title: "Dpto. de viajes",                              file: "/elinea-3-viajes.mp3" },
+      { n: "4", title: "Dpto. de artefactos analógicos",               file: "/elinea-4-artefactos.mp3" },
     ],
   },
   {
-    id: “los-banistas”,
-    title: “Los bañistas”,
-    category: “Performance sonora · 2022”,
-    description: “Grabación sonora de la performance basada en el poemario Los Bañistas (Ed. RIL, 2022) de Helena Mariño, realizada en el Espacio Cruce Contemporáneo de Madrid. Texto y voz: Helena Mariño. Música: Enri La Forêt.”,
-    year: “2022”,
-    image: “/poesia-1.jpg”,
+    id: "los-banistas",
+    title: "Los bañistas",
+    category: "Performance sonora · 2022",
+    description: "Grabación sonora de la performance basada en el poemario Los Bañistas (Ed. RIL, 2022) de Helena Mariño, realizada en el Espacio Cruce Contemporáneo de Madrid. Texto y voz: Helena Mariño. Música: Enri La Forêt.",
+    year: "2022",
+    image: "/poesia-1.jpg",
   },
   {
-    id: “capsulas-caixaforum”,
-    title: “Cápsulas Sonoras · CaixaForum”,
-    category: “Encargo · 2024”,
-    description: “Cápsulas sonoras creadas para el ciclo \”A la hora del té con Alicia\” de CaixaForum. Textos de Lewis Carroll. Música e interpretación: Enri La Forêt. Voz: Helena Mariño.”,
-    year: “2024”,
-    image: “/portada-aiw.png”,
+    id: "capsulas-caixaforum",
+    title: "Cápsulas Sonoras · CaixaForum",
+    category: "Encargo · 2024",
+    description: "Cápsulas sonoras creadas para el ciclo \"A la hora del té con Alicia\" de CaixaForum. Textos de Lewis Carroll. Música e interpretación: Enri La Forêt. Voz: Helena Mariño.",
+    year: "2024",
+    image: "/portada-aiw.png",
     tracks: [
-      { n: “1”, title: “¿Aún no has resuelto el enigma? Matemáticas y literatura”, file: “/aiw-1.mp3” },
-      { n: “2”, title: “La hora de los sentidos”,                                   file: “/aiw-2.mp3” },
-      { n: “3”, title: “El disparate. Placer y consuelo de lo absurdo”,             file: “/aiw-3.mp3” },
-      { n: “4”, title: “Tiempo de rebeldes”,                                        file: “/aiw-4.mp3” },
-      { n: “5”, title: “La hora de (algunas) cosas rebeldes”,                       file: “/aiw-5.mp3” },
+      { n: "1", title: "¿Aún no has resuelto el enigma? Matemáticas y literatura", file: "/aiw-1.mp3" },
+      { n: "2", title: "La hora de los sentidos",                                   file: "/aiw-2.mp3" },
+      { n: "3", title: "El disparate. Placer y consuelo de lo absurdo",             file: "/aiw-3.mp3" },
+      { n: "4", title: "Tiempo de rebeldes",                                        file: "/aiw-4.mp3" },
+      { n: "5", title: "La hora de (algunas) cosas rebeldes",                       file: "/aiw-5.mp3" },
     ],
   },
   {
-    id: “citas-sonoras-2025”,
-    title: “Citas Sonoras · Book Friday”,
-    category: “Encargo · 2024–2025”,
-    description: “Citas sonoras compuestas para el Book Friday de Madrid (2024 y 2025), organizado por la Asociación Cuesta de Moyano. Música: Enri La Forêt. Voz: Helena Mariño.”,
-    year: “2025”,
-    image: “/portada-bf.png”,
+    id: "citas-sonoras-2025",
+    title: "Citas Sonoras · Book Friday",
+    category: "Encargo · 2024–2025",
+    description: "Citas sonoras compuestas para el Book Friday de Madrid (2024 y 2025), organizado por la Asociación Cuesta de Moyano. Música: Enri La Forêt. Voz: Helena Mariño.",
+    year: "2025",
+    image: "/portada-bf.png",
     tracks: [
-      { n: “1”, title: “Samantha Harvey · Un malestar indefinido”, file: “/bf-1-samantha.mp3” },
-      { n: “2”, title: “Camila Sosa Villada · El viaje inútil”,    file: “/bf-2-camila.mp3” },
-      { n: “3”, title: “Silvina Ocampo · Transformation”,          file: “/bf-3-silvina.mp3” },
+      { n: "1", title: "Samantha Harvey · Un malestar indefinido", file: "/bf-1-samantha.mp3" },
+      { n: "2", title: "Camila Sosa Villada · El viaje inútil",    file: "/bf-2-camila.mp3" },
+      { n: "3", title: "Silvina Ocampo · Transformation",          file: "/bf-3-silvina.mp3" },
     ],
   },
 ];
@@ -98,11 +98,11 @@ export default function Home() {
 
   const handleProjectClick = useCallback((project) => {
     if (project.tracks) {
-      // Has audio â€” open player (EPV is default, others load their tracks)
+      // Has audio â€" open player (EPV is default, others load their tracks)
       if (project.id !== "album-epv") setAudioProject(project);
       setPlayerOpen(true);
     } else {
-      // No audio â€” show image modal
+      // No audio â€" show image modal
       setSelectedProject(project);
     }
   }, []);
@@ -184,3 +184,4 @@ export default function Home() {
     </div>
   );
 }
+
